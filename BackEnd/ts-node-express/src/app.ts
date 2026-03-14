@@ -11,6 +11,6 @@ app.use('/api/nasa/', NasaRouter);
 
 // Global error handler (should be after routes)
 app.use(errorHandler);
-app.use(notFoundHandler);
+app.use(notFoundHandler)
 
 export default app;
