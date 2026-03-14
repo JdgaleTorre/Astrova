@@ -1,0 +1,287 @@
+import { Router, Request, Response, NextFunction } from 'express';
+import axios from 'axios';
+
+const router = Router();
+
+// ─── APOD — Astronomy Picture of the Day ─────────────────
+/**
+ * GET /api/apod
+ * Query params:
+ *   - date?: string (YYYY-MM-DD) — specific date, defaults to today
+ *   - start_date?: string (YYYY-MM-DD) — start of date range
+ *   - end_date?: string (YYYY-MM-DD) — end of date range
+ *   - count?: number — random images count
+ */
+router.get('/apod', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { date, start_date, end_date, count } = req.query;
+
+        const params = new URLSearchParams({
+            api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+            ...(date && { date: date as string }),
+            ...(start_date && { start_date: start_date as string }),
+            ...(end_date && { end_date: end_date as string }),
+            ...(count && { count: count as string }),
+        });
+
+        const response = await axios.get(
+            `${process.env.NASA_BASE_URL}planetary/apod?${params}`
+        );
+
+        res.json({ success: true, data: response.data });
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+// ─── EPIC — Earth Polychromatic Imaging Camera ────────────
+/**
+ * GET /api/epic
+ * Query params:
+ *   - type?: string — 'natural' | 'enhanced' (default: natural)
+ */
+router.get('/epic', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { type = 'natural' } = req.query;
+
+        const params = new URLSearchParams({
+            api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+        });
+
+        const response = await axios.get(
+            `${process.env.NASA_BASE_URL}EPIC/api/${type}?${params}`
+        );
+
+        res.json({ success: true, data: response.data });
+    } catch (error) {
+        next(error);
+    }
+});
+
+/**
+ * GET /api/epic/dates
+ * Query params:
+ *   - type?: string — 'natural' | 'enhanced' (default: natural)
+ */
+router.get('/epic/dates', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { type = 'natural' } = req.query;
+
+        const params = new URLSearchParams({
+            api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+        });
+
+        const response = await axios.get(
+            `${process.env.NASA_BASE_URL}EPIC/api/${type}/all?${params}`
+        );
+
+        res.json({ success: true, data: response.data });
+    } catch (error) {
+        next(error);
+    }
+});
+
+/**
+ * GET /api/epic/:date
+ * Params:
+ *   - date: string (YYYY-MM-DD)
+ * Query params:
+ *   - type?: string — 'natural' | 'enhanced' (default: natural)
+ */
+router.get('/epic/:date', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { date } = req.params;
+        const { type = 'natural' } = req.query;
+
+        const params = new URLSearchParams({
+            api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+        });
+
+        const response = await axios.get(
+            `${process.env.NASA_BASE_URL}EPIC/api/${type}/date/${date}?${params}`
+        );
+
+        res.json({ success: true, data: response.data });
+    } catch (error) {
+        next(error);
+    }
+});
+
+// ─── NeoWs — Near Earth Object Web Service ────────────────
+/**
+ * GET /api/asteroids
+ * Query params:
+ *   - start_date?: string (YYYY-MM-DD) — defaults to today
+ *   - end_date?: string (YYYY-MM-DD) — max 7 days after start_date
+ */
+router.get('/asteroids', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { start_date, end_date } = req.query;
+
+        const params = new URLSearchParams({
+            api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+            ...(start_date && { start_date: start_date as string }),
+            ...(end_date && { end_date: end_date as string }),
+        });
+
+        const response = await axios.get(
+            `${process.env.NASA_BASE_URL}neo/rest/v1/feed?${params}`
+        );
+
+        res.json({ success: true, data: response.data });
+    } catch (error) {
+        next(error);
+    }
+});
+
+/**
+ * GET /api/asteroids/:id
+ * Params:
+ *   - id: string — NASA NeoWs asteroid ID
+ */
+router.get('/asteroids/:id', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+
+        const params = new URLSearchParams({
+            api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+        });
+
+        const response = await axios.get(
+            `${process.env.NASA_BASE_URL}neo/rest/v1/neo/${id}?${params}`
+        );
+
+        res.json({ success: true, data: response.data });
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+// ─── Earth — Satellite Imagery ───────────────────────────────
+/**
+ * GET /api/nasa/earth/imagery
+ * Query params:
+ *   - lon: number — longitude
+ *   - lat: number — latitude
+ *   - dim?: number — box size in degrees
+ *   - date?: string (YYYY-MM-DD) — date of imagery (max 30 days ago)
+ */
+router.get('/earth/imagery', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { lon, lat, dim, date } = req.query;
+
+        if (!lon || !lat) {
+            return res.status(400).json({ success: false, error: 'lon and lat are required' });
+        }
+
+        const params = new URLSearchParams({
+            api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+            ...(lon && { lon: lon as string }),
+            ...(lat && { lat: lat as string }),
+            ...(dim && { dim: dim as string }),
+            ...(date && { date: date as string }),
+        });
+
+        const response = await axios.get(
+            `${process.env.NASA_BASE_URL}planetary/earth/imagery?${params}`
+        );
+
+        res.json({ success: true, data: response.data });
+    } catch (error) {
+        next(error);
+    }
+});
+
+/**
+ * GET /api/nasa/earth/assets
+ * Query params:
+ *   - lon: number — longitude
+ * * lat: number — latitude
+ *   - date: string (YYYY-MM-DD) — date of imagery
+ *   - dim?: number — box size in degrees
+ */
+router.get('/earth/assets', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { lon, lat, date, dim } = req.query;
+
+        if (!lon || !lat || !date) {
+            return res.status(400).json({ success: false, error: 'lon, lat, and date are required' });
+        }
+
+        const params = new URLSearchParams({
+            api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+            ...(lon && { lon: lon as string }),
+            ...(lat && { lat: lat as string }),
+            ...(dim && { dim: dim as string }),
+        });
+
+        const response = await axios.get(
+            `${process.env.NASA_BASE_URL}planetary/earth/assets?date=${date}&${params}`
+        );
+
+        res.json({ success: true, data: response.data });
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+// ─── NASA Image and Video Library ────────────────────────────
+/**
+ * GET /api/nasa/images/search
+ * Query params:
+ *   - q: string — search query
+ *   - media_type?: string — 'image' | 'video' | 'audio'
+ *   - page?: number — page number
+ */
+router.get('/images/search', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { q, media_type, page } = req.query;
+
+        if (!q) {
+            return res.status(400).json({ success: false, error: 'q (search query) is required' });
+        }
+
+        const params = new URLSearchParams({
+            api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+            ...(q && { q: q as string }),
+            ...(media_type && { media_type: media_type as string }),
+            ...(page && { page: page as string }),
+        });
+
+        const response = await axios.get(
+            `${process.env.NASA_BASE_URL}images/search?${params}`
+        );
+
+        res.json({ success: true, data: response.data });
+    } catch (error) {
+        next(error);
+    }
+});
+
+/**
+ * GET /api/nasa/images/:id
+ * Params:
+ *   - id: string — NASA image/video ID
+ */
+router.get('/images/:id', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+
+        const params = new URLSearchParams({
+            api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+        });
+
+        const response = await axios.get(
+            `${process.env.NASA_BASE_URL}images/${id}?${params}`
+        );
+
+        res.json({ success: true, data: response.data });
+    } catch (error) {
+        next(error);
+    }
+});
+
+export default router;
