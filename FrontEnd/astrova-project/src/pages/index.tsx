@@ -6,5 +6,5 @@ export const Route = createFileRoute('/')({
 })
 
 function IndexPage() {
-    return <div>Index Page</div>
+    return <div className="min-h-screen pt-16">Index Page</div>
 }
