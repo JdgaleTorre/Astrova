@@ -4,6 +4,8 @@ import { useQuery } from '@tanstack/react-query'
 import { getApod } from '../services/nasa';
 import { Button } from '../components/ui/button';
 import { Calendar as CalendarIcon, Download } from 'lucide-react';
+import { Loading } from '../components/ui/loading';
+import { ErrorDisplay } from '../components/ui/error';
 
 
 export const Route = createFileRoute('/apod')({
@@ -19,9 +21,7 @@ export function ApodPage() {
         queryFn: () => getApod(date),
     })
 
-    if (isLoading) return <div>Loading...</div>
-    if (error) return <div>Something went wrong</div>
-
+    if (isLoading) return <Loading />
 
 
 
@@ -51,61 +51,65 @@ export function ApodPage() {
 
                 <div className="grid gap-8 max-w-6xl mx-auto">
 
-                    <div key={apodData?.date}>
-                        {/* Hero Image */}
-                        <div className="relative overflow-hidden rounded-2xl group mb-6">
-                            {apodData?.media_type === 'image' ? (
-                                <div className="relative">
-                                    <img
-                                        src={apodData?.url}
-                                        alt={apodData?.title}
-                                        className="w-full h-auto min-h-[400px] md:min-h-[600px] object-cover"
-                                    />
-                                    {/* Dark overlay gradient */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent opacity-80" />
+                    {error ? (
+                        <ErrorDisplay error={error} />
+                    ) : (
+                        <div key={apodData?.date}>
+                            {/* Hero Image */}
+                            <div className="relative overflow-hidden rounded-2xl group mb-6">
+                                {apodData?.media_type === 'image' ? (
+                                    <div className="relative">
+                                        <img
+                                            src={apodData?.url}
+                                            alt={apodData?.title}
+                                            className="w-full h-auto min-h-100 md:min-h-150 object-cover"
+                                        />
+                                        {/* Dark overlay gradient */}
+                                        <div className="absolute inset-0 bg-linear-to-t from-background via-background/50 to-transparent opacity-80" />
 
-                                    {/* Title overlay */}
-                                    <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
-                                        <div className="flex items-center gap-2 text-cyan text-sm mb-3">
-                                            <CalendarIcon className="h-4 w-4" />
-                                            <span>{apodData?.date}</span>
+                                        {/* Title overlay */}
+                                        <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
+                                            <div className="flex items-center gap-2 text-cyan text-sm mb-3">
+                                                <CalendarIcon className="h-4 w-4" />
+                                                <span>{apodData?.date}</span>
+                                            </div>
+                                            <h2 className="text-3xl md:text-5xl font-bold text-soft-white mb-4">
+                                                {apodData?.title}
+                                            </h2>
+                                            {apodData?.copyright && (
+                                                <p className="text-sm text-muted-foreground">
+                                                    © {apodData?.copyright}
+                                                </p>
+                                            )}
                                         </div>
-                                        <h2 className="text-3xl md:text-5xl font-bold text-soft-white mb-4">
-                                            {apodData?.title}
-                                        </h2>
-                                        {apodData?.copyright && (
-                                            <p className="text-sm text-cyan">
-                                                © {apodData?.copyright}
-                                            </p>
-                                        )}
-                                    </div>
 
-                                    {/* Download button on hover */}
-                                    <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <Button
-                                            size="sm"
-                                            className="bg-cyan/90 hover:bg-cyan text-background backdrop-blur-sm shadow-lg"
-                                            asChild
-                                        >
-                                            <a href={apodData?.hdurl || apodData?.url} target="_blank" rel="noopener noreferrer">
-                                                <Download className="h-4 w-4 mr-2" />
-                                                HD Image
-                                            </a>
-                                        </Button>
+                                        {/* Download button on hover */}
+                                        <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <Button
+                                                size="sm"
+                                                className="bg-cyan/90 hover:bg-cyan text-background backdrop-blur-sm shadow-lg"
+                                                asChild
+                                            >
+                                                <a href={apodData?.hdurl || apodData?.url} target="_blank" rel="noopener noreferrer">
+                                                    <Download className="h-4 w-4 mr-2" />
+                                                    HD Image
+                                                </a>
+                                            </Button>
+                                        </div>
                                     </div>
-                                </div>
-                            ) : (
-                                <div className="aspect-video bg-background rounded-2xl overflow-hidden">
-                                    <iframe
-                                        src={apodData?.url}
-                                        title={apodData?.title}
-                                        className="w-full h-full"
-                                        allowFullScreen
-                                    />
-                                </div>
-                            )}
+                                ) : (
+                                    <div className="aspect-video bg-background rounded-2xl overflow-hidden">
+                                        <iframe
+                                            src={apodData?.url}
+                                            title={apodData?.title}
+                                            className="w-full h-full"
+                                            allowFullScreen
+                                        />
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
         </div>
