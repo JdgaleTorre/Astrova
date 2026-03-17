@@ -1,7 +1,7 @@
 // src/routes/apod.tsx
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { getApod } from '../services/nasa';
+import { getApod, type ApodParams } from '../services/nasa';
 import { Button } from '../components/ui/button';
 import { Calendar as CalendarIcon, Download } from 'lucide-react';
 import { Loading } from '../components/ui/loading';
@@ -14,11 +14,12 @@ export const Route = createFileRoute('/apod')({
 
 
 export function ApodPage() {
-    const date = new Date().toISOString().split('T')[0]; // "2026-03-16"
+    const date = new Date().toISOString().split('T')[0];
+    const params: ApodParams = { date: date }
 
     const { data: apodData, isLoading, error } = useQuery({
         queryKey: ['apod', date],
-        queryFn: () => getApod(date),
+        queryFn: () => getApod(params),
     })
 
     if (isLoading) return <Loading />
@@ -53,15 +54,15 @@ export function ApodPage() {
 
                     {error ? (
                         <ErrorDisplay error={error} />
-                    ) : (
-                        <div key={apodData?.date}>
+                    ) : apodData?.map(data => (
+                        <div key={data?.date}>
                             {/* Hero Image */}
                             <div className="relative overflow-hidden rounded-2xl group mb-6">
-                                {apodData?.media_type === 'image' ? (
+                                {data?.media_type === 'image' ? (
                                     <div className="relative">
                                         <img
-                                            src={apodData?.url}
-                                            alt={apodData?.title}
+                                            src={data?.url}
+                                            alt={data?.title}
                                             className="w-full h-auto min-h-100 md:min-h-150 object-cover"
                                         />
                                         {/* Dark overlay gradient */}
@@ -71,14 +72,14 @@ export function ApodPage() {
                                         <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
                                             <div className="flex items-center gap-2 text-cyan text-sm mb-3">
                                                 <CalendarIcon className="h-4 w-4" />
-                                                <span>{apodData?.date}</span>
+                                                <span>{data?.date}</span>
                                             </div>
                                             <h2 className="text-3xl md:text-5xl font-bold text-soft-white mb-4">
-                                                {apodData?.title}
+                                                {data?.title}
                                             </h2>
-                                            {apodData?.copyright && (
+                                            {data?.copyright && (
                                                 <p className="text-sm text-muted-foreground">
-                                                    © {apodData?.copyright}
+                                                    © {data?.copyright}
                                                 </p>
                                             )}
                                         </div>
@@ -90,7 +91,7 @@ export function ApodPage() {
                                                 className="bg-cyan/90 hover:bg-cyan text-background backdrop-blur-sm shadow-lg"
                                                 asChild
                                             >
-                                                <a href={apodData?.hdurl || apodData?.url} target="_blank" rel="noopener noreferrer">
+                                                <a href={data?.hdurl || data?.url} target="_blank" rel="noopener noreferrer">
                                                     <Download className="h-4 w-4 mr-2" />
                                                     HD Image
                                                 </a>
@@ -100,8 +101,8 @@ export function ApodPage() {
                                 ) : (
                                     <div className="aspect-video bg-background rounded-2xl overflow-hidden">
                                         <iframe
-                                            src={apodData?.url}
-                                            title={apodData?.title}
+                                            src={data?.url}
+                                            title={data?.title}
                                             className="w-full h-full"
                                             allowFullScreen
                                         />
@@ -109,7 +110,7 @@ export function ApodPage() {
                                 )}
                             </div>
                         </div>
-                    )}
+                    ))}
                 </div>
             </div>
         </div>
