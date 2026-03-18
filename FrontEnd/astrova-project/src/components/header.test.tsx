@@ -5,7 +5,12 @@ import { NAVIGATION_LINKS } from '../utils/navigationLinks';
 
 jest.mock('@tanstack/react-router', () => ({
     useLocation: jest.fn(() => ({ pathname: '/' })),
-    Link: ({ children }: { children: React.ReactNode }) => <a href="/">{children}</a>,
+    Link: ({ to, children, id, className }: {
+        to: string;
+        children: React.ReactNode;
+        id?: string;
+        className?: string;
+    }) => <a href={to} id={id} className={className}>{children}</a>,
 }));
 
 describe('Header', () => {
@@ -26,10 +31,10 @@ describe('Header', () => {
     });
 
     it('highlights active navigation item', () => {
-        const { useLocation } = jest.requireMock('@tanstack/react-router');
+        const { useLocation } = jest.requireMock('@tanstack/react-router') as { useLocation: jest.Mock };
         useLocation.mockReturnValue({ pathname: '/apod' });
         const { container } = render(<Header />);
-        const activeLink = container.querySelector('.text-cyan');
+        const activeLink = container.querySelector('#active-nav-link');
         expect(activeLink).toBeInTheDocument();
     });
 

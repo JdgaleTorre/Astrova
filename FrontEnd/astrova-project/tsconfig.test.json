@@ -10,5 +10,10 @@
     "isolatedModules": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*.test.ts", "src/**/*.test.tsx", "test/**/*.ts", "test/**/*.d.ts"]
+  "include": [
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "test/**/*.ts",
+    "test/**/*.d.ts"
+  ]
 }

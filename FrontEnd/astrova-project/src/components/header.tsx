@@ -29,6 +29,8 @@ export function Header() {
                                 ? 'text-cyan'
                                 : 'text-muted-foreground hover:text-soft-white'
                                 }`}
+
+                            id={location.pathname === item.path ? 'active-nav-link' : undefined}
                         >
                             {item.label}
                             {location.pathname === item.path && (
@@ -40,6 +42,6 @@ export function Header() {
                 </nav>
 
             </div>
-        </header>
+        </header >
     );
 }
