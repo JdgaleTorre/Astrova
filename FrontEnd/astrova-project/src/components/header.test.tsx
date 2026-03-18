@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import { Header } from './header';
+import { NAVIGATION_LINKS } from '../utils/navigationLinks';
 
 jest.mock('@tanstack/react-router', () => ({
     useLocation: jest.fn(() => ({ pathname: '/' })),
@@ -19,11 +20,9 @@ describe('Header', () => {
 
     it('renders navigation links', () => {
         render(<Header />);
-        expect(screen.getByText('Home')).toBeInTheDocument();
-        expect(screen.getByText('APOD')).toBeInTheDocument();
-        expect(screen.getByText('Mars Rovers')).toBeInTheDocument();
-        expect(screen.getByText('Asteroids')).toBeInTheDocument();
-        expect(screen.getByText('EPIC')).toBeInTheDocument();
+        NAVIGATION_LINKS.map((nav) => {
+            expect(screen.getByText(nav.label)).toBeInTheDocument();
+        })
     });
 
     it('highlights active navigation item', () => {
