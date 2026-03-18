@@ -1,13 +1,6 @@
 import { Link, useLocation } from '@tanstack/react-router'
 import { Sparkles } from 'lucide-react';
-
-const navItems = [
-    { path: '/', label: 'Home' },
-    { path: '/apod', label: 'APOD' },
-    { path: '/mars-rovers', label: 'Mars Rovers' },
-    { path: '/neo', label: 'Asteroids' },
-    { path: '/epic', label: 'EPIC' },
-];
+import { NAVIGATION_LINKS } from '../utils/navigationLinks';
 
 export function Header() {
     const location = useLocation();
@@ -28,7 +21,7 @@ export function Header() {
 
                 {/* Desktop Navigation */}
                 <nav className="hidden md:flex items-center gap-1 flex-1 justify-center">
-                    {navItems.map((item) => (
+                    {NAVIGATION_LINKS.map((item) => (
                         <Link
                             key={item.path}
                             to={item.path}
@@ -36,6 +29,8 @@ export function Header() {
                                 ? 'text-cyan'
                                 : 'text-muted-foreground hover:text-soft-white'
                                 }`}
+
+                            id={location.pathname === item.path ? 'active-nav-link' : undefined}
                         >
                             {item.label}
                             {location.pathname === item.path && (
@@ -47,6 +42,6 @@ export function Header() {
                 </nav>
 
             </div>
-        </header>
+        </header >
     );
 }
