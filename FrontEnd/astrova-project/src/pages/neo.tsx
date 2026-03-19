@@ -1,8 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { CalendarIcon, AlertTriangle, Orbit, Timer, Ruler, ExternalLink, Rocket, Calculator } from 'lucide-react';
-import { Popover, PopoverTrigger } from '../components/ui/popover';
+import { CalendarIcon, AlertTriangle, Orbit, Timer, Ruler, ExternalLink, Rocket, Calculator, ChevronDown, ArrowUpDown } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { Button } from '../components/ui/button';
-import { PopoverContent } from '@radix-ui/react-popover';
 import { Calendar } from '../components/ui/calendar';
 import { useState } from 'react';
 import type { DateRange } from 'react-day-picker';
@@ -11,6 +10,10 @@ import { getAsteroids, type NeoParams, type NeoAsteroid } from '../services/nasa
 import { useQuery } from '@tanstack/react-query';
 import { Loading } from '../components/ui/loading';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+
+type HazardFilter = 'all' | 'hazardous' | 'safe';
+type SizeFilter = 'all' | 'small' | 'medium' | 'large';
+type SortBy = 'distance' | 'velocity' | 'size';
 
 
 export const Route = createFileRoute('/neo')({
@@ -22,7 +25,7 @@ function AsteroidCard({ asteroid }: { asteroid: NeoAsteroid }) {
   const diameter = asteroid.estimated_diameter.meters;
 
   return (
-    <Card className="bg-card/50 backdrop-blur-sm border-white/5 hover:border-primary/30 transition-colors z-1">
+    <Card className="bg-card/50 backdrop-blur-sm border-white/5 hover:border-primary/30 transition-colors ">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
           <CardTitle className="text-lg text-soft-white">{asteroid.name}</CardTitle>
@@ -83,6 +86,10 @@ function AsteroidCard({ asteroid }: { asteroid: NeoAsteroid }) {
 
 function RouteComponent() {
   const [selectedDate, setSelectedDate] = useState<DateRange | undefined>({ from: new Date() });
+  const [hazardFilter, setHazardFilter] = useState<HazardFilter>('all');
+  const [sizeFilter, setSizeFilter] = useState<SizeFilter>('all');
+  const [sortBy, setSortBy] = useState<SortBy>('distance');
+
   const params: NeoParams = {
     start_date: selectedDate?.from?.toISOString().split('T')[0],
     end_date: selectedDate?.to === undefined ? selectedDate?.from?.toISOString().split('T')[0] : selectedDate?.to.toISOString().split('T')[0]
@@ -96,7 +103,36 @@ function RouteComponent() {
   if (isLoading) return <Loading />
 
   const sortedDates = data ? Object.keys(data.near_earth_objects).sort() : [];
-  const hazardousCount = data ? Object.values(data.near_earth_objects).flat().filter(a => a.is_potentially_hazardous_asteroid).length : 0;
+  const allAsteroids = data ? Object.values(data.near_earth_objects).flat() : [];
+  const hazardousCount = allAsteroids.filter(a => a.is_potentially_hazardous_asteroid).length;
+
+  const filterAsteroids = (asteroids: NeoAsteroid[]) => {
+    return asteroids
+      .filter(a => {
+        if (hazardFilter === 'hazardous' && !a.is_potentially_hazardous_asteroid) return false;
+        if (hazardFilter === 'safe' && a.is_potentially_hazardous_asteroid) return false;
+
+        const avgDiameter = (a.estimated_diameter.meters.estimated_diameter_min + a.estimated_diameter.meters.estimated_diameter_max) / 2;
+        if (sizeFilter === 'small' && avgDiameter >= 100) return false;
+        if (sizeFilter === 'medium' && (avgDiameter < 100 || avgDiameter > 500)) return false;
+        if (sizeFilter === 'large' && avgDiameter <= 500) return false;
+
+        return true;
+      })
+      .sort((a, b) => {
+        if (sortBy === 'distance') {
+          return a.close_approach_data[0].miss_distance.lunar.localeCompare(b.close_approach_data[0].miss_distance.lunar);
+        }
+        if (sortBy === 'velocity') {
+          return parseFloat(b.close_approach_data[0].relative_velocity.kilometers_per_hour) - parseFloat(a.close_approach_data[0].relative_velocity.kilometers_per_hour);
+        }
+        const sizeA = (a.estimated_diameter.meters.estimated_diameter_min + a.estimated_diameter.meters.estimated_diameter_max) / 2;
+        const sizeB = (b.estimated_diameter.meters.estimated_diameter_min + b.estimated_diameter.meters.estimated_diameter_max) / 2;
+        return sizeB - sizeA;
+      });
+  };
+
+  const getFilteredCount = () => filterAsteroids(allAsteroids).length;
 
   return (
     <div className="min-h-screen flex flex-col pt-16 relative">
@@ -208,25 +244,86 @@ function RouteComponent() {
 
               </div>
 
-              {sortedDates.map(date => (
-                <div key={date} className="mb-8">
-                  <h2 className="text-xl font-semibold text-soft-white mb-4 flex items-center gap-2">
-                    <span className="w-2 h-2 bg-primary rounded-full" />
-                    {format(new Date(date), 'EEEE, MMMM d, yyyy')}
-                    <span className="text-sm text-muted-foreground font-normal">
-                      ({data.near_earth_objects[date].length} objects)
-                    </span>
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {data.near_earth_objects[date]
-                      .sort((a, b) => a.close_approach_data[0].miss_distance.lunar.localeCompare(b.close_approach_data[0].miss_distance.lunar))
-                      .map(asteroid => (
-                        <AsteroidCard key={asteroid.id} asteroid={asteroid} />
-                      ))
-                    }
+              <div className="flex flex-col sm:flex-row gap-4 mb-6 p-4 bg-card/30 backdrop-blur-sm rounded-lg border border-white/5 z-50">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm text-muted-foreground">Filter:</span>
+                  <div className="flex rounded-md overflow-hidden border border-white/10">
+                    <button
+                      onClick={() => setHazardFilter('all')}
+                      className={`px-3 py-1.5 text-sm transition-colors ${hazardFilter === 'all' ? 'bg-primary text-white' : 'bg-transparent text-muted-foreground hover:bg-white/5'}`}
+                    >
+                      All ({allAsteroids.length})
+                    </button>
+                    <button
+                      onClick={() => setHazardFilter('hazardous')}
+                      className={`px-3 py-1.5 text-sm transition-colors border-l border-white/10 ${hazardFilter === 'hazardous' ? 'bg-red-500/80 text-white' : 'bg-transparent text-muted-foreground hover:bg-white/5'}`}
+                    >
+                      Hazardous ({hazardousCount})
+                    </button>
+                    <button
+                      onClick={() => setHazardFilter('safe')}
+                      className={`px-3 py-1.5 text-sm transition-colors border-l border-white/10 ${hazardFilter === 'safe' ? 'bg-green-500/80 text-white' : 'bg-transparent text-muted-foreground hover:bg-white/5'}`}
+                    >
+                      Safe ({allAsteroids.length - hazardousCount})
+                    </button>
                   </div>
+
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" size="sm" className="border-white/10 hover:bg-white/5">
+                        <Ruler className="h-4 w-4 mr-1" />
+                        {sizeFilter === 'all' ? 'All Sizes' : sizeFilter.charAt(0).toUpperCase() + sizeFilter.slice(1)}
+                        <ChevronDown className="h-4 w-4 ml-1" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-40 p-1 bg-surface/95 backdrop-blur-xl border-white/10">
+                      <button onClick={() => setSizeFilter('all')} className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-white/5 ${sizeFilter === 'all' ? 'text-primary' : 'text-muted-foreground'}`}>All Sizes</button>
+                      <button onClick={() => setSizeFilter('small')} className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-white/5 ${sizeFilter === 'small' ? 'text-primary' : 'text-muted-foreground'}`}>Small (&lt;100m)</button>
+                      <button onClick={() => setSizeFilter('medium')} className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-white/5 ${sizeFilter === 'medium' ? 'text-primary' : 'text-muted-foreground'}`}>Medium (100-500m)</button>
+                      <button onClick={() => setSizeFilter('large')} className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-white/5 ${sizeFilter === 'large' ? 'text-primary' : 'text-muted-foreground'}`}>Large (&gt;500m)</button>
+                    </PopoverContent>
+                  </Popover>
                 </div>
-              ))}
+
+                <div className="flex flex-wrap items-center gap-2 sm:ml-auto">
+                  <span className="text-sm text-muted-foreground">Showing {getFilteredCount()} of {allAsteroids.length}</span>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" size="sm" className="border-white/10 hover:bg-white/5">
+                        <ArrowUpDown className="h-4 w-4 mr-1" />
+                        {sortBy === 'distance' ? 'Closest' : sortBy === 'velocity' ? 'Fastest' : 'Largest'}
+                        <ChevronDown className="h-4 w-4 ml-1" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-40 p-1 bg-surface/95 backdrop-blur-xl border-white/10">
+                      <button onClick={() => setSortBy('distance')} className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-white/5 ${sortBy === 'distance' ? 'text-primary' : 'text-muted-foreground'}`}>Closest</button>
+                      <button onClick={() => setSortBy('velocity')} className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-white/5 ${sortBy === 'velocity' ? 'text-primary' : 'text-muted-foreground'}`}>Fastest</button>
+                      <button onClick={() => setSortBy('size')} className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-white/5 ${sortBy === 'size' ? 'text-primary' : 'text-muted-foreground'}`}>Largest</button>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
+
+              {sortedDates.map(date => {
+                const filtered = filterAsteroids(data.near_earth_objects[date]);
+                if (filtered.length === 0) return null;
+                return (
+                  <div key={date} className="mb-8 ">
+                    <h2 className="text-xl font-semibold text-soft-white mb-4 flex items-center gap-2 ">
+                      <span className="w-2 h-2 bg-primary rounded-full" />
+                      {format(new Date(date), 'EEEE, MMMM d, yyyy')}
+                      <span className="text-sm text-muted-foreground font-normal">
+                        ({filtered.length} objects)
+                      </span>
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {filtered.map(asteroid => (
+                        <AsteroidCard key={asteroid.id} asteroid={asteroid} />
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </>
         )}
