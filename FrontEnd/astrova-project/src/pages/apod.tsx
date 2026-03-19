@@ -3,9 +3,15 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { getApod, type ApodParams } from '../services/nasa';
 import { Button } from '../components/ui/button';
-import { Calendar as CalendarIcon, Download } from 'lucide-react';
+import { Calendar as CalendarIcon, Download, ExternalLink } from 'lucide-react';
 import { Loading } from '../components/ui/loading';
 import { ErrorDisplay } from '../components/ui/error';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { useState } from 'react';
+import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
+import { Calendar } from '../components/ui/calendar';
+import { format } from 'date-fns';
+import type { DateRange } from 'react-day-picker';
 
 
 export const Route = createFileRoute('/apod')({
@@ -14,11 +20,14 @@ export const Route = createFileRoute('/apod')({
 
 
 export function ApodPage() {
-    const date = new Date().toISOString().split('T')[0];
-    const params: ApodParams = { date: date }
+    const [selectedDate, setSelectedDate] = useState<DateRange | undefined>({ from: new Date() });
+    const params: ApodParams = {
+        start_date: selectedDate?.from?.toISOString().split('T')[0],
+        end_date: selectedDate?.to === undefined ? selectedDate?.from?.toISOString().split('T')[0] : selectedDate?.to.toISOString().split('T')[0]
+    }
 
     const { data: apodData, isLoading, error } = useQuery({
-        queryKey: ['apod', date],
+        queryKey: ['apod', selectedDate?.from, selectedDate?.to],
         queryFn: () => getApod(params),
     })
 
@@ -32,7 +41,7 @@ export function ApodPage() {
 
             {/* Header Section */}
             <div className="border-b border-white/5 bg-surface/30 backdrop-blur-sm">
-                <div className="container w-full py-8 px-4">
+                <div className="w-full py-8 px-4">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
                             <h1 className="text-4xl md:text-5xl font-bold mb-2 tracking-tight">
@@ -43,6 +52,40 @@ export function ApodPage() {
                                 Discover the cosmos through NASA's daily featured images
                             </p>
                         </div>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    className="w-full md:w-auto border-cyan/20 hover:bg-cyan/10 hover:border-cyan/40 backdrop-blur-sm"
+                                >
+                                    <CalendarIcon className="mr-2 h-4 w-4 text-cyan" />
+                                    {selectedDate?.from
+                                        && `${format(selectedDate.from, 'PPP')}${selectedDate?.to ? `→ ${format(selectedDate.to, 'PPP')}` : ``}`
+
+                                    }
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0 bg-surface/95 backdrop-blur-xl border-white/10" align="end">
+                                <Calendar
+                                    mode="range"
+                                    selected={selectedDate}
+                                    onSelect={setSelectedDate}
+                                    disabled={(date) => date > new Date() || date < new Date('1995-06-16')}
+                                    navLayout='around'
+                                    captionLayout="dropdown"
+                                    min={1}
+                                    max={5}
+                                    footer={<p className="text-center text-sm text-muted-foreground pt-3 border-t border-white/5 mt-3">
+                                        {selectedDate?.from && selectedDate?.to
+                                            ? `${Math.ceil((selectedDate.to.getTime() - selectedDate.from.getTime()) / (1000 * 60 * 60 * 24))} days selected`
+                                            : 'Pick a range up to 6 days.'
+                                        }
+                                    </p>}
+                                    initialFocus
+                                />
+
+                            </PopoverContent>
+                        </Popover>
                     </div>
                 </div>
             </div>
@@ -100,15 +143,55 @@ export function ApodPage() {
                                     </div>
                                 ) : (
                                     <div className="aspect-video bg-background rounded-2xl overflow-hidden">
-                                        <iframe
+                                        <video
                                             src={data?.url}
                                             title={data?.title}
-                                            className="w-full h-full"
-                                            allowFullScreen
+                                            className="w-full aspect-video rounded-xl"
+                                            controls
+                                            autoPlay
+                                            loop
+                                            muted
                                         />
                                     </div>
                                 )}
                             </div>
+                            {/* Description Panel */}
+                            <Card className="bg-card/50 backdrop-blur-sm border-white/5">
+                                <CardHeader>
+                                    <div
+                                        className="flex items-center justify-between cursor-pointer group"
+                                    // onClick={() => setShowDescription(prev => ({ ...prev, [apod.date]: !prev[apod.date] }))}
+                                    >
+                                        <CardTitle className="text-xl text-soft-white group-hover:text-cyan transition-colors">
+                                            Description
+                                        </CardTitle>
+                                        {/* <ChevronDown
+                                            className={`h-5 w-5 text-cyan transition-transform ${showDescription[apod.date] ? 'rotate-180' : ''
+                                                }`}
+                                        /> */}
+                                    </div>
+                                </CardHeader>
+
+                                <CardContent>
+                                    <p className="text-muted-foreground leading-relaxed text-base">
+                                        {data.explanation}
+                                    </p>
+                                    <div className="flex gap-3 mt-6">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            asChild
+                                            className="border-cyan/20 hover:bg-cyan/10 hover:border-cyan/40"
+                                        >
+                                            <a href={data.hdurl || data.url} target="_blank" rel="noopener noreferrer">
+                                                <ExternalLink className="h-4 w-4 mr-2" />
+                                                View Original
+                                            </a>
+                                        </Button>
+                                    </div>
+                                </CardContent>
+
+                            </Card>
                         </div>
                     ))}
                 </div>
