@@ -143,11 +143,14 @@ export function ApodPage() {
                                     </div>
                                 ) : (
                                     <div className="aspect-video bg-background rounded-2xl overflow-hidden">
-                                        <iframe
+                                        <video
                                             src={data?.url}
                                             title={data?.title}
                                             className="w-full aspect-video rounded-xl"
-                                            allowFullScreen
+                                            controls
+                                            autoPlay
+                                            loop
+                                            muted
                                         />
                                     </div>
                                 )}
