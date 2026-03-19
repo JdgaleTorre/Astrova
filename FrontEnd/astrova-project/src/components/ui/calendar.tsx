@@ -26,6 +26,9 @@ function Calendar({
                 root: `${defaultClassNames.root} shadow-lg p-5`,
                 months_dropdown: 'bg-popover text-popover-foreground m-5',
                 years_dropdown: 'bg-popover text-popover-foreground m-5',
+                range_start: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-r-none",
+                range_end: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground  rounded-l-none",
+                range_middle: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground  rounded-none",
                 ...classNames,
             }}
             {...props}
