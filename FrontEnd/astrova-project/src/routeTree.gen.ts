@@ -9,9 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './pages/__root'
+import { Route as NeoRouteImport } from './pages/neo'
 import { Route as ApodRouteImport } from './pages/apod'
 import { Route as IndexRouteImport } from './pages/index'
 
+const NeoRoute = NeoRouteImport.update({
+  id: '/neo',
+  path: '/neo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApodRoute = ApodRouteImport.update({
   id: '/apod',
   path: '/apod',
@@ -26,31 +32,42 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/apod': typeof ApodRoute
+  '/neo': typeof NeoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/apod': typeof ApodRoute
+  '/neo': typeof NeoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/apod': typeof ApodRoute
+  '/neo': typeof NeoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/apod'
+  fullPaths: '/' | '/apod' | '/neo'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/apod'
-  id: '__root__' | '/' | '/apod'
+  to: '/' | '/apod' | '/neo'
+  id: '__root__' | '/' | '/apod' | '/neo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApodRoute: typeof ApodRoute
+  NeoRoute: typeof NeoRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/neo': {
+      id: '/neo'
+      path: '/neo'
+      fullPath: '/neo'
+      preLoaderRoute: typeof NeoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/apod': {
       id: '/apod'
       path: '/apod'
@@ -71,6 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApodRoute: ApodRoute,
+  NeoRoute: NeoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
