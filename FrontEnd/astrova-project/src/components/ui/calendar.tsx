@@ -20,6 +20,7 @@ function Calendar({
                     "hover:bg-accent dark:hover:bg-accent/50 rounded-full hover:text-primary-foreground",
                     "w-full size-8 p-0 font-normal aria-selected:opacity-100",
                 ),
+                today: "text-primary",
                 selected:
                     "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
                 chevron: `fill-primary`,

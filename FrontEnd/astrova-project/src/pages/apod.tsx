@@ -23,7 +23,7 @@ export function ApodPage() {
     const [selectedDate, setSelectedDate] = useState<DateRange | undefined>({ from: new Date() });
     const params: ApodParams = {
         start_date: selectedDate?.from?.toISOString().split('T')[0],
-        end_date: selectedDate?.to?.toISOString().split('T')[0]
+        end_date: selectedDate?.to === undefined ? selectedDate?.from?.toISOString().split('T')[0] : selectedDate?.to.toISOString().split('T')[0]
     }
 
     const { data: apodData, isLoading, error } = useQuery({
@@ -41,7 +41,7 @@ export function ApodPage() {
 
             {/* Header Section */}
             <div className="border-b border-white/5 bg-surface/30 backdrop-blur-sm">
-                <div className="container w-full py-8 px-4">
+                <div className="w-full py-8 px-4">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
                             <h1 className="text-4xl md:text-5xl font-bold mb-2 tracking-tight">
@@ -59,9 +59,9 @@ export function ApodPage() {
                                     className="w-full md:w-auto border-cyan/20 hover:bg-cyan/10 hover:border-cyan/40 backdrop-blur-sm"
                                 >
                                     <CalendarIcon className="mr-2 h-4 w-4 text-cyan" />
-                                    {selectedDate?.from && selectedDate?.to
-                                        ? `${format(selectedDate.from, 'PPP')} → ${format(selectedDate.to, 'PPP')}`
-                                        : 'Pick a date range'
+                                    {selectedDate?.from
+                                        && `${format(selectedDate.from, 'PPP')}${selectedDate?.to ? `→ ${format(selectedDate.to, 'PPP')}` : ``}`
+
                                     }
                                 </Button>
                             </PopoverTrigger>
@@ -69,10 +69,18 @@ export function ApodPage() {
                                 <Calendar
                                     mode="range"
                                     selected={selectedDate}
-                                    onSelect={(date) => date && setSelectedDate(date)}
+                                    onSelect={setSelectedDate}
                                     disabled={(date) => date > new Date() || date < new Date('1995-06-16')}
                                     navLayout='around'
                                     captionLayout="dropdown"
+                                    min={1}
+                                    max={5}
+                                    footer={<p className="text-center text-sm text-muted-foreground pt-3 border-t border-white/5 mt-3">
+                                        {selectedDate?.from && selectedDate?.to
+                                            ? `${Math.ceil((selectedDate.to.getTime() - selectedDate.from.getTime()) / (1000 * 60 * 60 * 24))} days selected`
+                                            : 'Pick a range up to 6 days.'
+                                        }
+                                    </p>}
                                     initialFocus
                                 />
 
