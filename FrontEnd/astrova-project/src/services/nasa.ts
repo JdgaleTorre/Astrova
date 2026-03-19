@@ -83,8 +83,13 @@ export interface NeoFeedResponse {
     near_earth_objects: Record<string, NeoAsteroid[]>
 }
 
-export const getAsteroids = async (start_date?: string, end_date?: string): Promise<NeoFeedResponse> => {
-    const { data } = await api.get('/api/nasa/asteroids', { params: { start_date, end_date } })
+export interface NeoParams {
+    start_date?: string
+    end_date?: string
+}
+
+export const getAsteroids = async (params?: NeoParams): Promise<NeoFeedResponse> => {
+    const { data } = await api.get('/api/nasa/asteroids', { params })
     return data.data
 }
 
