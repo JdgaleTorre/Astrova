@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { Calendar } from '../components/ui/calendar';
 import { format } from 'date-fns';
+import type { DateRange } from 'react-day-picker';
 
 
 export const Route = createFileRoute('/apod')({
@@ -19,11 +20,14 @@ export const Route = createFileRoute('/apod')({
 
 
 export function ApodPage() {
-    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-    const params: ApodParams = { date: selectedDate.toISOString().split('T')[0] }
+    const [selectedDate, setSelectedDate] = useState<DateRange | undefined>({ from: new Date() });
+    const params: ApodParams = {
+        start_date: selectedDate?.from?.toISOString().split('T')[0],
+        end_date: selectedDate?.to?.toISOString().split('T')[0]
+    }
 
     const { data: apodData, isLoading, error } = useQuery({
-        queryKey: ['apod', selectedDate],
+        queryKey: ['apod', selectedDate?.from, selectedDate?.to],
         queryFn: () => getApod(params),
     })
 
@@ -55,12 +59,15 @@ export function ApodPage() {
                                     className="w-full md:w-auto border-cyan/20 hover:bg-cyan/10 hover:border-cyan/40 backdrop-blur-sm"
                                 >
                                     <CalendarIcon className="mr-2 h-4 w-4 text-cyan" />
-                                    {format(selectedDate, 'PPP')}
+                                    {selectedDate?.from && selectedDate?.to
+                                        ? `${format(selectedDate.from, 'PPP')} → ${format(selectedDate.to, 'PPP')}`
+                                        : 'Pick a date range'
+                                    }
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0 bg-surface/95 backdrop-blur-xl border-white/10" align="end">
                                 <Calendar
-                                    mode="single"
+                                    mode="range"
                                     selected={selectedDate}
                                     onSelect={(date) => date && setSelectedDate(date)}
                                     disabled={(date) => date > new Date() || date < new Date('1995-06-16')}
@@ -131,7 +138,7 @@ export function ApodPage() {
                                         <iframe
                                             src={data?.url}
                                             title={data?.title}
-                                            className="w-full h-full"
+                                            className="w-full aspect-video rounded-xl"
                                             allowFullScreen
                                         />
                                     </div>
