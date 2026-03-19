@@ -3,9 +3,14 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { getApod, type ApodParams } from '../services/nasa';
 import { Button } from '../components/ui/button';
-import { Calendar as CalendarIcon, Download } from 'lucide-react';
+import { Calendar as CalendarIcon, Download, ExternalLink } from 'lucide-react';
 import { Loading } from '../components/ui/loading';
 import { ErrorDisplay } from '../components/ui/error';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { useState } from 'react';
+import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
+import { Calendar } from '../components/ui/calendar';
+import { format } from 'date-fns';
 
 
 export const Route = createFileRoute('/apod')({
@@ -14,11 +19,11 @@ export const Route = createFileRoute('/apod')({
 
 
 export function ApodPage() {
-    const date = new Date().toISOString().split('T')[0];
-    const params: ApodParams = { date: date }
+    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+    const params: ApodParams = { date: selectedDate.toISOString().split('T')[0] }
 
     const { data: apodData, isLoading, error } = useQuery({
-        queryKey: ['apod', date],
+        queryKey: ['apod', selectedDate],
         queryFn: () => getApod(params),
     })
 
@@ -43,6 +48,29 @@ export function ApodPage() {
                                 Discover the cosmos through NASA's daily featured images
                             </p>
                         </div>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    className="w-full md:w-auto border-cyan/20 hover:bg-cyan/10 hover:border-cyan/40 backdrop-blur-sm"
+                                >
+                                    <CalendarIcon className="mr-2 h-4 w-4 text-cyan" />
+                                    {format(selectedDate, 'PPP')}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0 bg-surface/95 backdrop-blur-xl border-white/10" align="end">
+                                <Calendar
+                                    mode="single"
+                                    selected={selectedDate}
+                                    onSelect={(date) => date && setSelectedDate(date)}
+                                    disabled={(date) => date > new Date() || date < new Date('1995-06-16')}
+                                    navLayout='around'
+                                    captionLayout="dropdown"
+                                    initialFocus
+                                />
+
+                            </PopoverContent>
+                        </Popover>
                     </div>
                 </div>
             </div>
@@ -109,6 +137,43 @@ export function ApodPage() {
                                     </div>
                                 )}
                             </div>
+                            {/* Description Panel */}
+                            <Card className="bg-card/50 backdrop-blur-sm border-white/5">
+                                <CardHeader>
+                                    <div
+                                        className="flex items-center justify-between cursor-pointer group"
+                                    // onClick={() => setShowDescription(prev => ({ ...prev, [apod.date]: !prev[apod.date] }))}
+                                    >
+                                        <CardTitle className="text-xl text-soft-white group-hover:text-cyan transition-colors">
+                                            Description
+                                        </CardTitle>
+                                        {/* <ChevronDown
+                                            className={`h-5 w-5 text-cyan transition-transform ${showDescription[apod.date] ? 'rotate-180' : ''
+                                                }`}
+                                        /> */}
+                                    </div>
+                                </CardHeader>
+
+                                <CardContent>
+                                    <p className="text-muted-foreground leading-relaxed text-base">
+                                        {data.explanation}
+                                    </p>
+                                    <div className="flex gap-3 mt-6">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            asChild
+                                            className="border-cyan/20 hover:bg-cyan/10 hover:border-cyan/40"
+                                        >
+                                            <a href={data.hdurl || data.url} target="_blank" rel="noopener noreferrer">
+                                                <ExternalLink className="h-4 w-4 mr-2" />
+                                                View Original
+                                            </a>
+                                        </Button>
+                                    </div>
+                                </CardContent>
+
+                            </Card>
                         </div>
                     ))}
                 </div>
