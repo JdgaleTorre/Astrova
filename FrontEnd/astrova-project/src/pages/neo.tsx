@@ -136,7 +136,7 @@ function RouteComponent() {
 
   return (
     <div className="min-h-screen flex flex-col pt-16 relative">
-      <div className="fixed w-full z-50 border-b border-white/5 bg-surface/30 backdrop-blur-sm">
+      <div className="md:fixed w-full z-50 border-b border-white/5 bg-surface/30 backdrop-blur-sm">
         <div className="w-full py-8 px-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
@@ -188,7 +188,7 @@ function RouteComponent() {
         </div>
       </div>
 
-      <div className="container max-w-7xl mx-auto py-12  pt-48 px-4">
+      <div className="container max-w-7xl mx-auto py-12  md:pt-48 px-4">
         {data && (
           <>
             <div className="flex-wrap gap-4 mb-8">

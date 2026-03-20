@@ -40,7 +40,7 @@ export function ApodPage() {
 
 
             {/* Header Section */}
-            <div className="fixed w-full z-50 border-b border-white/5 bg-surface/30 backdrop-blur-sm">
+            <div className="md:fixed w-full z-50 border-b border-white/5 bg-surface/30 backdrop-blur-sm">
                 <div className="w-full py-8 px-4">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
@@ -91,7 +91,7 @@ export function ApodPage() {
             </div>
 
             {/* Content */}
-            <div className="container max-w-7xl mx-auto pt-48 py-12 px-4 justify-center">
+            <div className="container max-w-7xl mx-auto md:pt-48 py-12 px-4 justify-center">
 
                 <div className="grid gap-8 max-w-6xl mx-auto">
 

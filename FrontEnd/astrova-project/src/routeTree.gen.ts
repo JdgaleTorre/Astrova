@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './pages/__root'
 import { Route as NeoRouteImport } from './pages/neo'
+import { Route as EpicRouteImport } from './pages/epic'
 import { Route as ApodRouteImport } from './pages/apod'
 import { Route as IndexRouteImport } from './pages/index'
 
 const NeoRoute = NeoRouteImport.update({
   id: '/neo',
   path: '/neo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EpicRoute = EpicRouteImport.update({
+  id: '/epic',
+  path: '/epic',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApodRoute = ApodRouteImport.update({
@@ -32,30 +38,34 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/apod': typeof ApodRoute
+  '/epic': typeof EpicRoute
   '/neo': typeof NeoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/apod': typeof ApodRoute
+  '/epic': typeof EpicRoute
   '/neo': typeof NeoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/apod': typeof ApodRoute
+  '/epic': typeof EpicRoute
   '/neo': typeof NeoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/apod' | '/neo'
+  fullPaths: '/' | '/apod' | '/epic' | '/neo'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/apod' | '/neo'
-  id: '__root__' | '/' | '/apod' | '/neo'
+  to: '/' | '/apod' | '/epic' | '/neo'
+  id: '__root__' | '/' | '/apod' | '/epic' | '/neo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApodRoute: typeof ApodRoute
+  EpicRoute: typeof EpicRoute
   NeoRoute: typeof NeoRoute
 }
 
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/neo'
       fullPath: '/neo'
       preLoaderRoute: typeof NeoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/epic': {
+      id: '/epic'
+      path: '/epic'
+      fullPath: '/epic'
+      preLoaderRoute: typeof EpicRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/apod': {
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApodRoute: ApodRoute,
+  EpicRoute: EpicRoute,
   NeoRoute: NeoRoute,
 }
 export const routeTree = rootRouteImport
