@@ -1,6 +1,7 @@
 import express from 'express';
 import NasaRouter from './routes/NasaRoutes';
 import { errorHandler, notFoundHandler } from './middlewares/errorHandler';
+import { requestLogger } from './middlewares/requestLogger';
 import cors from 'cors';
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
@@ -22,6 +23,10 @@ app.use(cors({
     },
     methods: ['GET'],
 }));
+
+if (process.env.NODE_ENV !== 'production') {
+    app.use(requestLogger);
+}
 
 // Routes
 app.use('/api/nasa/', NasaRouter);

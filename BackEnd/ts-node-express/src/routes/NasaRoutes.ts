@@ -45,12 +45,12 @@ router.get('/epic', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { type = 'natural' } = req.query;
 
-        const params = new URLSearchParams({
-            api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
-        });
+        // const params = new URLSearchParams({
+        //     api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+        // });
 
         const response = await axios.get(
-            `${process.env.NASA_BASE_URL}EPIC/api/${type}?${params}`
+            `${process.env.EPIC_BASE_URL}api/${type}`
         );
 
         res.json({ success: true, data: response.data });
@@ -68,12 +68,12 @@ router.get('/epic/dates', async (req: Request, res: Response, next: NextFunction
     try {
         const { type = 'natural' } = req.query;
 
-        const params = new URLSearchParams({
-            api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
-        });
+        // const params = new URLSearchParams({
+        //     api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+        // });
 
         const response = await axios.get(
-            `${process.env.NASA_BASE_URL}EPIC/api/${type}/all?${params}`
+            `${process.env.EPIC_BASE_URL}api/${type}/all`
         );
 
         res.json({ success: true, data: response.data });
@@ -94,12 +94,12 @@ router.get('/epic/:date', async (req: Request, res: Response, next: NextFunction
         const { date } = req.params;
         const { type = 'natural' } = req.query;
 
-        const params = new URLSearchParams({
-            api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
-        });
+        // const params = new URLSearchParams({
+        //     api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+        // });
 
         const response = await axios.get(
-            `${process.env.NASA_BASE_URL}EPIC/api/${type}/date/${date}?${params}`
+            `${process.env.EPIC_BASE_URL}api/${type}/date/${date}`
         );
 
         res.json({ success: true, data: response.data });
