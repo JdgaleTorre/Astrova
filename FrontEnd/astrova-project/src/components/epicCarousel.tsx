@@ -3,16 +3,17 @@ import { Button } from './ui/button'
 import { Card, CardHeader, CardTitle } from './ui/card'
 import { ImageCarousel } from './ui/imageCarousel'
 import type { EpicImage, EpicType } from '../services/nasa'
+import { useState } from 'react'
 
 interface EpicCarouselProps {
   images: EpicImage[]
-  selectedIndex: number
-  onSelect: (index: number) => void
   dateStr: string
   type: EpicType
 }
 
-export function EpicCarousel({ images, selectedIndex, onSelect, dateStr, type }: EpicCarouselProps) {
+export function EpicCarousel({ images, dateStr, type }: EpicCarouselProps) {
+  const [selectedIndex, onSelect] = useState(0); // ← starts at 0 on every mount
+
   if (!images || !images[selectedIndex]) return null
 
   const currentImage = images[selectedIndex]
