@@ -1,17 +1,17 @@
-import { createFileRoute } from '@tanstack/react-router'
-import HeaderComponent from '../components/headerComponent'
-import { Input } from '../components/ui/input'
-import { Button } from '../components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
-import { Loading } from '../components/ui/loading'
-import { ErrorDisplay } from '../components/ui/error'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import HeaderComponent from '../../components/headerComponent'
+import { Input } from '../../components/ui/input'
+import { Button } from '../../components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card'
+import { Loading } from '../../components/ui/loading'
+import { ErrorDisplay } from '../../components/ui/error'
 import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { searchImages, type ImageSearchParams } from '../services/nasa'
-import { Search, Image, Video, Calendar, ExternalLink } from 'lucide-react'
+import { searchImages, type ImageSearchParams } from '../../services/nasa'
+import { Search, Image, Video, Calendar } from 'lucide-react'
 import { format } from 'date-fns'
 
-export const Route = createFileRoute('/library')({
+export const Route = createFileRoute('/library/')({
     component: RouteComponent,
 })
 
@@ -19,6 +19,7 @@ function RouteComponent() {
     const [searchQuery, setSearchQuery] = useState('')
     const [debouncedQuery, setDebouncedQuery] = useState('')
     const [selectedMediaType, setSelectedMediaType] = useState<'all' | 'image' | 'video' | 'audio'>('all')
+    const navigate = useNavigate()
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -141,6 +142,7 @@ function RouteComponent() {
                     {!isLoading && !error && results.length > 0 && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             {results.map((item) => {
+                                const nasaId = item.data[0]?.nasa_id
                                 const imageUrl = item.links?.find(link => link.render === 'image')?.href || item.href
                                 const title = item.data[0]?.title || 'Untitled'
                                 const date = item.data[0]?.date_created
@@ -148,54 +150,48 @@ function RouteComponent() {
                                     : 'Unknown date'
                                 const mediaType = item.data[0]?.media_type || 'image'
 
+                                if (!nasaId) return null
+
                                 return (
-                                    <Card
-                                        key={item.data[0]?.nasa_id || imageUrl}
-                                        className="bg-card/50 backdrop-blur-sm border-white/5 overflow-hidden group hover:border-cyan/30 transition-all"
+                                    <div
+                                        key={nasaId}
+                                        onClick={() => navigate({ to: '/library/$id', params: { id: nasaId } })}
+                                        className="block cursor-pointer"
                                     >
-                                        <div className="relative aspect-square overflow-hidden bg-surface">
-                                            <img
-                                                src={imageUrl}
-                                                alt={title}
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                                loading="lazy"
-                                            />
-                                            <div className="absolute top-2 right-2">
-                                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-background/80 backdrop-blur-sm border border-white/10">
-                                                    {mediaType === 'video' ? (
-                                                        <Video className="h-3 w-3 text-cyan" />
-                                                    ) : (
-                                                        <Image className="h-3 w-3 text-cyan" />
-                                                    )}
-                                                    <span className="capitalize text-soft-white">{mediaType}</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <CardHeader className="p-4 pb-2">
-                                            <CardTitle className="text-sm font-medium line-clamp-2 text-soft-white">
-                                                {title}
-                                            </CardTitle>
-                                        </CardHeader>
-                                        <CardContent className="p-4 pt-2">
-                                            <div className="flex items-center justify-between">
-                                                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                                    <Calendar className="h-3 w-3" />
-                                                    <span>{date}</span>
+                                        <Card className="bg-card/50 backdrop-blur-sm border-white/5 overflow-hidden group hover:border-cyan/30 transition-all h-full">
+                                            <div className="relative aspect-square overflow-hidden bg-surface">
+                                                <img
+                                                    src={imageUrl}
+                                                    alt={title}
+                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                    loading="lazy"
+                                                />
+                                                <div className="absolute top-2 right-2">
+                                                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-background/80 backdrop-blur-sm border border-white/10">
+                                                        {mediaType === 'video' ? (
+                                                            <Video className="h-3 w-3 text-cyan" />
+                                                        ) : (
+                                                            <Image className="h-3 w-3 text-cyan" />
+                                                        )}
+                                                        <span className="capitalize text-soft-white">{mediaType}</span>
+                                                    </span>
                                                 </div>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    asChild
-                                                    className="h-7 text-xs text-cyan hover:bg-cyan/10 hover:text-cyan"
-                                                >
-                                                    <a href={imageUrl} target="_blank" rel="noopener noreferrer">
-                                                        <ExternalLink className="h-3 w-3 mr-1" />
-                                                        View Original
-                                                    </a>
-                                                </Button>
                                             </div>
-                                        </CardContent>
-                                    </Card>
+                                            <CardHeader className="p-4 pb-2">
+                                                <CardTitle className="text-sm font-medium line-clamp-2 text-soft-white">
+                                                    {title}
+                                                </CardTitle>
+                                            </CardHeader>
+                                            <CardContent className="p-4 pt-2">
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                                        <Calendar className="h-3 w-3" />
+                                                        <span>{date}</span>
+                                                    </div>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    </div>
                                 )
                             })}
                         </div>
