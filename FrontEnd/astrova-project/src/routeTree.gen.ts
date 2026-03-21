@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './pages/__root'
 import { Route as NeoRouteImport } from './pages/neo'
+import { Route as LibraryRouteImport } from './pages/library'
 import { Route as EpicRouteImport } from './pages/epic'
 import { Route as ApodRouteImport } from './pages/apod'
 import { Route as IndexRouteImport } from './pages/index'
@@ -17,6 +18,11 @@ import { Route as IndexRouteImport } from './pages/index'
 const NeoRoute = NeoRouteImport.update({
   id: '/neo',
   path: '/neo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LibraryRoute = LibraryRouteImport.update({
+  id: '/library',
+  path: '/library',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EpicRoute = EpicRouteImport.update({
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/apod': typeof ApodRoute
   '/epic': typeof EpicRoute
+  '/library': typeof LibraryRoute
   '/neo': typeof NeoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/apod': typeof ApodRoute
   '/epic': typeof EpicRoute
+  '/library': typeof LibraryRoute
   '/neo': typeof NeoRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/apod': typeof ApodRoute
   '/epic': typeof EpicRoute
+  '/library': typeof LibraryRoute
   '/neo': typeof NeoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/apod' | '/epic' | '/neo'
+  fullPaths: '/' | '/apod' | '/epic' | '/library' | '/neo'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/apod' | '/epic' | '/neo'
-  id: '__root__' | '/' | '/apod' | '/epic' | '/neo'
+  to: '/' | '/apod' | '/epic' | '/library' | '/neo'
+  id: '__root__' | '/' | '/apod' | '/epic' | '/library' | '/neo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApodRoute: typeof ApodRoute
   EpicRoute: typeof EpicRoute
+  LibraryRoute: typeof LibraryRoute
   NeoRoute: typeof NeoRoute
 }
 
@@ -76,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/neo'
       fullPath: '/neo'
       preLoaderRoute: typeof NeoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/library': {
+      id: '/library'
+      path: '/library'
+      fullPath: '/library'
+      preLoaderRoute: typeof LibraryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/epic': {
@@ -106,6 +123,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApodRoute: ApodRoute,
   EpicRoute: EpicRoute,
+  LibraryRoute: LibraryRoute,
   NeoRoute: NeoRoute,
 }
 export const routeTree = rootRouteImport

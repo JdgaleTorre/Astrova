@@ -245,14 +245,13 @@ router.get('/images/search', async (req: Request, res: Response, next: NextFunct
         }
 
         const params = new URLSearchParams({
-            api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
             ...(q && { q: q as string }),
             ...(media_type && { media_type: media_type as string }),
             ...(page && { page: page as string }),
         });
 
         const response = await axios.get(
-            `${process.env.NASA_BASE_URL}images/search?${params}`
+            `${process.env.IMAGES_BASE_URL}search?${params}`
         );
 
         res.json({ success: true, data: response.data });
@@ -270,12 +269,9 @@ router.get('/images/:id', async (req: Request, res: Response, next: NextFunction
     try {
         const { id } = req.params;
 
-        const params = new URLSearchParams({
-            api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
-        });
 
         const response = await axios.get(
-            `${process.env.NASA_BASE_URL}images/${id}?${params}`
+            `${process.env.IMAGES_BASE_URL}asset/${id}`
         );
 
         res.json({ success: true, data: response.data });

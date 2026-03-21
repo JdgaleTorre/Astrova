@@ -8,13 +8,15 @@ import AcronymTitle from "./ui/acronymTitle";
 import type { Dispatch, SetStateAction } from "react";
 
 export interface HeaderComponentProps {
-    title: string,
-    description: string,
-    showCalendarFilter: boolean,
-    selectedDate: Date | DateRange | undefined,
-    setSelectedDate: Dispatch<SetStateAction<DateRange | undefined>> | Dispatch<SetStateAction<Date | undefined>> | Dispatch<SetStateAction<Date>>,
-    disableDates: (date: Date) => boolean,
-    calendarMode: 'single' | 'range',
+    title: string;
+    description: string;
+    showCalendarFilter?: boolean;
+    selectedDate?: Date | DateRange;
+    setSelectedDate?: Dispatch<SetStateAction<DateRange | undefined>>
+    | Dispatch<SetStateAction<Date | undefined>>
+    | Dispatch<SetStateAction<Date>>;
+    disableDates?: (date: Date) => boolean;
+    calendarMode?: 'single' | 'range';
 }
 
 export default function HeaderComponent({ title, description, showCalendarFilter = true, selectedDate, setSelectedDate, disableDates, calendarMode }: HeaderComponentProps) {
