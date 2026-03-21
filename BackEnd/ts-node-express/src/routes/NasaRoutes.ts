@@ -1,5 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import axios from 'axios';
+import { generateAsteroidSummary } from '../services/aiService';
 
 const router = Router();
 
@@ -110,7 +111,7 @@ router.get('/epic/:date', async (req: Request, res: Response, next: NextFunction
 
 // ─── NeoWs — Near Earth Object Web Service ────────────────
 /**
- * GET /api/asteroids
+ * GET /api/nasa/asteroids
  * Query params:
  *   - start_date?: string (YYYY-MM-DD) — defaults to today
  *   - end_date?: string (YYYY-MM-DD) — max 7 days after start_date
@@ -129,7 +130,27 @@ router.get('/asteroids', async (req: Request, res: Response, next: NextFunction)
             `${process.env.NASA_BASE_URL}neo/rest/v1/feed?${params}`
         );
 
-        res.json({ success: true, data: response.data });
+        const nasaData = response.data;
+
+        let aiSummary = null;
+        if (process.env.OPENAI_API_KEY) {
+            try {
+                aiSummary = await generateAsteroidSummary(nasaData);
+            } catch (aiError) {
+                console.error('AI summary generation failed:', aiError);
+            }
+        }
+
+        console.log({
+            success: true,
+            data: nasaData,
+            aiSummary
+        })
+        res.json({
+            success: true,
+            data: nasaData,
+            aiSummary
+        });
     } catch (error) {
         next(error);
     }
@@ -241,9 +262,9 @@ router.get('/images/search', async (req: Request, res: Response, next: NextFunct
         const { q, media_type, page, nasa_id } = req.query;
 
         if (!q && !nasa_id) {
-            return res.status(400).json({ 
-                success: false, 
-                error: 'Either q (search query) or nasa_id is required' 
+            return res.status(400).json({
+                success: false,
+                error: 'Either q (search query) or nasa_id is required'
             });
         }
 

@@ -90,7 +90,7 @@ function IndexPage() {
 
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                     {FEATURED_LINKS.map((link => (
-                        <Link to={link.path} className="group">
+                        <Link key={link.path} to={link.path} className="group">
                             <Card className={`h-full bg-card/50 backdrop-blur-sm border-white/5 hover:border-${link.color}/20 hover:shadow-xl hover:shadow-${link.color}/10 transition-all duration-300 hover:-translate-y-1`}>
                                 <CardHeader>
                                     <div className={`w-12 h-12 rounded-lg bg-${link.color}/10 flex items-center justify-center mb-4 group-hover:bg-${link.color}/20 transition-colors`}>
@@ -200,7 +200,7 @@ function IndexPage() {
                 </button>
 
                 <div
-                    className={`grid gap-8 md:grid-cols-2 lg:grid-cols-3 transition-all duration-300 ease-in-out ${isTechStackOpen ? 'opacity-100 max-h-[2000px]' : 'opacity-0 max-h-0 overflow-hidden'
+                    className={`grid gap-8 md:grid-cols-2 lg:grid-cols-3 transition-all duration-300 ease-in-out ${isTechStackOpen ? 'opacity-100 max-h-500' : 'opacity-0 max-h-0 overflow-hidden'
                         }`}
                 >
                     {TECH_STACK.map((section) => (
@@ -223,7 +223,7 @@ function IndexPage() {
                                                 rel="noopener noreferrer"
                                                 className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors group"
                                             >
-                                                <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-cyan group-hover:scale-110 transition-transform">
+                                                <div className="shrink-0 w-8 h-8 flex items-center justify-center text-cyan group-hover:scale-110 transition-transform">
                                                     <IconComponent className="h-5 w-5" />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
@@ -232,7 +232,7 @@ function IndexPage() {
                                                     </span>
                                                     <p className="text-xs text-muted-foreground truncate">{item.description}</p>
                                                 </div>
-                                                <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-cyan transition-colors flex-shrink-0" />
+                                                <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-cyan transition-colors shrink-0" />
                                             </a>
                                         )
                                     })}

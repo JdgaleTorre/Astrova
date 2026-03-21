@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import NasaRouter from './routes/NasaRoutes';
 import { errorHandler, notFoundHandler } from './middlewares/errorHandler';
