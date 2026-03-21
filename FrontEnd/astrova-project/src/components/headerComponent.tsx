@@ -20,7 +20,7 @@ export interface HeaderComponentProps {
 }
 
 export default function HeaderComponent({ title, description, showCalendarFilter = true, selectedDate, setSelectedDate, disableDates, calendarMode }: HeaderComponentProps) {
-    return (<div className="md:fixed w-full z-50 border-b border-white/5 bg-surface/30 backdrop-blur-sm">
+    return (<div className="md:fixed w-full z-40 border-b border-white/5 bg-surface/30 backdrop-blur-sm">
         <div className="w-full py-8 px-4">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>

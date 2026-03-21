@@ -1,13 +1,17 @@
 import { Link, useLocation } from '@tanstack/react-router'
-import { Sparkles } from 'lucide-react';
-import { NAVIGATION_LINKS } from '../utils/navigationLinks';
+import { Menu, Sparkles } from 'lucide-react';
+import { NAVIGATION_LINKS } from '../utils/navigationLinks.tsx';
+import { Button } from './ui/button';
+import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
+import { useState } from 'react';
 
 export function Header() {
     const location = useLocation();
+    const [sheetOpen, setSheetOpen] = useState(false);
 
     return (
         <header className="fixed top-0 z-50 w-full border-b pl-4 border-white/5 backdrop-blur-xl bg-surface/60 shadow-lg shadow-black/20">
-            <div className="container flex h-16 items-center">
+            <div className="flex h-16 items-center">
                 <Link to='/' className="flex items-center gap-2 mr-8 group">
                     <div className="relative">
                         <Sparkles className="h-6 w-6 text-cyan transition-transform group-hover:rotate-12 group-hover:scale-110" />
@@ -40,6 +44,51 @@ export function Header() {
                         </Link>
                     ))}
                 </nav>
+
+                {/* Mobile Navigation */}
+                <div className="flex-1 md:hidden" />
+                <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+                    <SheetTrigger asChild className="md:hidden">
+                        <Button variant="ghost" size="icon" className="hover:bg-cyan/10">
+                            <Menu className="h-5 w-5" />
+                            <span className="sr-only">Toggle menu</span>
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent side="right" className="bg-surface/95 backdrop-blur-xl border-white/10">
+                        <nav className="flex flex-col gap-2 mt-10">
+                            {NAVIGATION_LINKS.map((item) => (
+                                <Link
+                                    key={item.path}
+                                    to={item.path}
+                                    onClick={() => setSheetOpen(false)}
+                                    className={`px-4 py-3 text-sm font-medium transition-all rounded-lg ${location.pathname === item.path
+                                        ? 'text-cyan bg-cyan/10 border border-cyan/20'
+                                        : 'text-muted-foreground hover:text-soft-white hover:bg-white/5'
+                                        }`}
+                                >
+                                    {item.label}
+                                </Link>
+                            ))}
+                        </nav>
+                    </SheetContent>
+                </Sheet>
+
+                <div className="ml-auto hidden md:block">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        asChild
+                        className="border-cyan/20 text-cyan hover:bg-cyan/10 hover:border-cyan/40 hover:shadow-lg hover:shadow-cyan/20 transition-all"
+                    >
+                        <a
+                            href="https://api.nasa.gov/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            API Docs
+                        </a>
+                    </Button>
+                </div>
 
             </div>
         </header >
