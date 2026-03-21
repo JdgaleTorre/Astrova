@@ -8,10 +8,8 @@ import { Loading } from '../components/ui/loading';
 import { ErrorDisplay } from '../components/ui/error';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { useState } from 'react';
-import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
-import { Calendar } from '../components/ui/calendar';
-import { format } from 'date-fns';
 import type { DateRange } from 'react-day-picker';
+import HeaderComponent from '../components/headerComponent';
 
 
 export const Route = createFileRoute('/apod')({
@@ -38,60 +36,17 @@ export function ApodPage() {
     return (
         <div className="min-h-screen flex flex-col pt-16">
 
-
-            {/* Header Section */}
-            <div className="fixed w-full z-50 border-b border-white/5 bg-surface/30 backdrop-blur-sm">
-                <div className="w-full py-8 px-4">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                        <div>
-                            <h1 className="text-4xl md:text-5xl font-bold mb-2 tracking-tight">
-                                <span className="text-soft-white">Astronomy Picture </span>
-                                <span className="text-primary">of the Day</span>
-                            </h1>
-                            <p className="text-muted-foreground text-lg">
-                                Discover the cosmos through NASA's daily featured images
-                            </p>
-                        </div>
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    className="w-full md:w-auto border-cyan/20 hover:bg-cyan/10 hover:border-cyan/40 backdrop-blur-sm"
-                                >
-                                    <CalendarIcon className="mr-2 h-4 w-4 text-cyan" />
-                                    {selectedDate?.from
-                                        && `${format(selectedDate.from, 'PPP')}${selectedDate?.to ? `→ ${format(selectedDate.to, 'PPP')}` : ``}`
-
-                                    }
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0 bg-surface/95 backdrop-blur-xl border-white/10" align="end">
-                                <Calendar
-                                    mode="range"
-                                    selected={selectedDate}
-                                    onSelect={setSelectedDate}
-                                    disabled={(date) => date > new Date() || date < new Date('1995-06-16')}
-                                    navLayout='around'
-                                    captionLayout="dropdown"
-                                    min={1}
-                                    max={5}
-                                    footer={<p className="text-center text-sm text-muted-foreground pt-3 border-t border-white/5 mt-3">
-                                        {selectedDate?.from && selectedDate?.to
-                                            ? `${Math.ceil((selectedDate.to.getTime() - selectedDate.from.getTime()) / (1000 * 60 * 60 * 24))} days selected`
-                                            : 'Pick a range up to 6 days.'
-                                        }
-                                    </p>}
-                                    initialFocus
-                                />
-
-                            </PopoverContent>
-                        </Popover>
-                    </div>
-                </div>
-            </div>
+            <HeaderComponent
+                title='Astronomy Picture Of the Day'
+                description={`Discover the cosmos through NASA' s daily featured images`}
+                showCalendarFilter
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                disableDates={(date: Date) => date > new Date() || date < new Date('1995-06-16')}
+                calendarMode='range' />
 
             {/* Content */}
-            <div className="container max-w-7xl mx-auto pt-48 py-12 px-4 justify-center">
+            <div className="container max-w-7xl mx-auto md:pt-48 py-12 px-4 justify-center">
 
                 <div className="grid gap-8 max-w-6xl mx-auto">
 

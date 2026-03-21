@@ -1,8 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { CalendarIcon, AlertTriangle, Orbit, Timer, Ruler, ExternalLink, Rocket, Calculator, ChevronDown, ArrowUpDown } from 'lucide-react';
+import { AlertTriangle, Orbit, Ruler, Calculator, ChevronDown, ArrowUpDown } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { Button } from '../components/ui/button';
-import { Calendar } from '../components/ui/calendar';
 import { useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 import { format } from 'date-fns';
@@ -10,6 +9,8 @@ import { getAsteroids, type NeoParams, type NeoAsteroid } from '../services/nasa
 import { useQuery } from '@tanstack/react-query';
 import { Loading } from '../components/ui/loading';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import HeaderComponent from '../components/headerComponent';
+import AsteroidCard from '../components/astroidCard';
 
 type HazardFilter = 'all' | 'hazardous' | 'safe';
 type SizeFilter = 'all' | 'small' | 'medium' | 'large';
@@ -20,69 +21,7 @@ export const Route = createFileRoute('/neo')({
   component: RouteComponent,
 })
 
-function AsteroidCard({ asteroid }: { asteroid: NeoAsteroid }) {
-  const approach = asteroid.close_approach_data[0];
-  const diameter = asteroid.estimated_diameter.meters;
 
-  return (
-    <Card className="bg-card/50 backdrop-blur-sm border-white/5 hover:border-primary/30 transition-colors ">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-lg text-soft-white">{asteroid.name}</CardTitle>
-          {asteroid.is_potentially_hazardous_asteroid && (
-            <span className="flex items-center gap-1 px-2 py-1 bg-red-500/20 text-red-400 text-xs rounded-full border border-red-500/30">
-              <AlertTriangle className="h-3 w-3" />
-              Hazardous
-            </span>
-          )}
-        </div>
-        <a
-          href={asteroid.nasa_jpl_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs text-cyan hover:text-cyan/80 flex items-center gap-1 transition-colors"
-        >
-          NASA JPL <ExternalLink className="h-3 w-3" />
-        </a>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        <div className="grid grid-cols-2 gap-3 text-sm">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Ruler className="h-4 w-4 text-primary" />
-            <span>Size</span>
-          </div>
-          <span className="text-soft-white text-right">
-            {diameter.estimated_diameter_min.toFixed(0)} - {diameter.estimated_diameter_max.toFixed(0)} m
-          </span>
-
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Rocket className="h-4 w-4 text-stellar-orange" />
-            <span>Velocity</span>
-          </div>
-          <span className="text-soft-white text-right">
-            {parseFloat(approach.relative_velocity.kilometers_per_hour).toLocaleString()} km/h
-          </span>
-
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Orbit className="h-4 w-4 text-secondary" />
-            <span>Miss Distance</span>
-          </div>
-          <span className="text-soft-white text-right">
-            {parseFloat(approach.miss_distance.lunar).toFixed(2)} lunar
-          </span>
-
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Timer className="h-4 w-4 text-cyan" />
-            <span>Approach</span>
-          </div>
-          <span className="text-soft-white text-right">
-            {format(new Date(approach.close_approach_date), 'MMM d, yyyy')}
-          </span>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
 
 function RouteComponent() {
   const [selectedDate, setSelectedDate] = useState<DateRange | undefined>({ from: new Date() });
@@ -136,59 +75,17 @@ function RouteComponent() {
 
   return (
     <div className="min-h-screen flex flex-col pt-16 relative">
-      <div className="fixed w-full z-50 border-b border-white/5 bg-surface/30 backdrop-blur-sm">
-        <div className="w-full py-8 px-4">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold mb-2">
-                <span className="text-primary">N</span>
-                <span className="text-soft-white">ear </span>
-                <span className="text-primary">E</span>
-                <span className="text-soft-white">arth </span>
-                <span className="text-primary">O</span>
-                <span className="text-soft-white">bjects</span>
-              </h1>
-              <p className="text-muted-foreground">
-                Track asteroids approaching Earth
-              </p>
-            </div>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full md:w-auto border-cyan/20 hover:bg-cyan/10 hover:border-cyan/40 backdrop-blur-sm"
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4 text-cyan" />
-                  {selectedDate?.from
-                    && `${format(selectedDate.from, 'PPP')}${selectedDate?.to ? ` → ${format(selectedDate.to, 'PPP')}` : ``}`
-                  }
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 bg-surface/95 backdrop-blur-xl border-white/10" align="end">
-                <Calendar
-                  mode="range"
-                  selected={selectedDate}
-                  onSelect={setSelectedDate}
-                  disabled={(date) => date > new Date() || date < new Date('1995-06-16')}
-                  navLayout='around'
-                  captionLayout="dropdown"
-                  min={1}
-                  max={5}
-                  footer={<p className="text-center text-sm text-muted-foreground pt-3 border-t border-white/5 mt-3">
-                    {selectedDate?.from && selectedDate?.to
-                      ? `${Math.ceil((selectedDate.to.getTime() - selectedDate.from.getTime()) / (1000 * 60 * 60 * 24))} days selected`
-                      : 'Pick a range up to 6 days.'
-                    }
-                  </p>}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-        </div>
-      </div>
+      <HeaderComponent
+        title='Near Earth Objects'
+        description='Track asteroids approaching Earth'
+        showCalendarFilter
+        selectedDate={selectedDate}
+        setSelectedDate={setSelectedDate}
+        disableDates={(date) => date > new Date() || date < new Date('1995-06-16')}
+        calendarMode='range'
+      />
 
-      <div className="container max-w-7xl mx-auto py-12  pt-48 px-4">
+      <div className="container max-w-7xl mx-auto py-12  md:pt-48 px-4">
         {data && (
           <>
             <div className="flex-wrap gap-4 mb-8">

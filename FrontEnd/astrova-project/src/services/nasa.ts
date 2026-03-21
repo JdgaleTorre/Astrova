@@ -47,7 +47,7 @@ export const getEpic = async (type: EpicType = 'natural'): Promise<EpicImage[]> 
     return data.data
 }
 
-export const getEpicDates = async (type: EpicType = 'natural'): Promise<string[]> => {
+export const getEpicDates = async (type: EpicType = 'natural'): Promise<{ date: string }[]> => {
     const { data } = await api.get('/api/nasa/epic/dates', { params: { type } })
     return data.data
 }
