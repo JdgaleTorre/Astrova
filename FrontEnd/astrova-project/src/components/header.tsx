@@ -1,6 +1,6 @@
 import { Link, useLocation } from '@tanstack/react-router'
 import { Menu, Sparkles } from 'lucide-react';
-import { NAVIGATION_LINKS } from '../utils/navigationLinks';
+import { NAVIGATION_LINKS } from '../utils/navigationLinks.tsx';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import { useState } from 'react';

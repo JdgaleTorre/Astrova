@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import { Header } from './header';
-import { NAVIGATION_LINKS } from '../utils/navigationLinks';
+import { NAVIGATION_LINKS } from '../utils/navigationLinks.tsx';
 
 jest.mock('@tanstack/react-router', () => ({
     useLocation: jest.fn(() => ({ pathname: '/' })),

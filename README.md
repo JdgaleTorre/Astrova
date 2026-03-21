@@ -1,4 +1,4 @@
-# 🚀 Stellara — NASA Space Explorer
+# 🚀 Astrova — NASA Space Explorer
 
 > An interactive full-stack web application that brings NASA's universe of space data to life through stunning visualisations, real-time data, and AI-powered insights.
 
@@ -7,11 +7,16 @@
 ![Node.js](https://img.shields.io/badge/Node.js-Express-339933?logo=node.js)
 ![NASA API](https://img.shields.io/badge/NASA-Open%20APIs-E03C31?logo=nasa)
 
+## 🔗 Live Demo
+
+- **Frontend:** https://astrova.josegale.com/
+- **Backend API:** https://astrova-xwmj.onrender.com/
+
 ---
 
 ## 🌌 Overview
 
-**Stellara** is a full-stack space exploration app built with React and Node.js/Express. It connects to NASA's Open APIs to let users explore the cosmos — from today's astronomy picture, to Mars rover photos, to near-Earth asteroid tracking — all wrapped in a sleek, space-themed UI with AI-powered summaries.
+**Astrova** is a full-stack space exploration app built with React and Node.js/Express. It connects to NASA's Open APIs to let users explore the cosmos — from today's astronomy picture, to near-Earth asteroid tracking, to stunning Earth imagery — all wrapped in a sleek, space-themed UI.
 
 The backend acts as a secure proxy between the frontend and NASA's APIs, keeping the API key safe and handling data transformation before it reaches the user.
 
@@ -20,11 +25,9 @@ The backend acts as a secure proxy between the frontend and NASA's APIs, keeping
 ## ✨ Features
 
 - 🌠 **Astronomy Picture of the Day (APOD)** — Daily space images with descriptions and date navigation
-- 🔴 **Mars Rover Gallery** — Browse photos taken by Curiosity, Opportunity, and Spirit
 - ☄️ **Asteroid Tracker (NeoWs)** — Visualise near-Earth objects with size and risk data
 - 🌍 **EPIC Earth Imagery** — View stunning full-disc photos of Earth from space
-- 🤖 **AI Insights** — Claude-powered summaries and explanations of space data
-- 📊 **Data Visualisations** — Interactive charts for asteroid distances, sizes, and rover stats
+- 📸 **NASA Image Library** — Search and explore NASA's vast collection of images, videos, and audio
 - 📱 **Responsive Design** — Fully optimised for desktop, tablet, and mobile
 
 ---
@@ -32,27 +35,25 @@ The backend acts as a secure proxy between the frontend and NASA's APIs, keeping
 ## 🏗️ Project Structure
 
 ```
-stellara/
-├── frontend/               # React application
-│   ├── public/
-│   ├── src/
-│   │   ├── components/     # Reusable UI components
-│   │   ├── pages/          # Page-level components
-│   │   ├── hooks/          # Custom React hooks
-│   │   ├── services/       # API call functions
-│   │   ├── utils/          # Helper functions
-│   │   └── App.jsx
-│   ├── .env.example
-│   └── package.json
-├── backend/                # Node.js + Express server
-│   ├── src/
-│   │   ├── routes/         # Express route handlers
-│   │   ├── controllers/    # Business logic
-│   │   ├── services/       # NASA API integration
-│   │   ├── middleware/      # Error handling, logging
-│   │   └── index.js        # Server entry point
-│   ├── .env.example
-│   └── package.json
+Astrova/
+├── FrontEnd/
+│   └── astrova-project/    # React + Vite application
+│       ├── src/
+│       │   ├── components/     # Reusable UI components
+│       │   ├── pages/          # Page-level components (TanStack Router)
+│       │   ├── services/       # API call functions
+│       │   └── utils/          # Helper functions and constants
+│       ├── .env
+│       └── package.json
+├── BackEnd/
+│   └── ts-node-express/   # Node.js + Express server
+│       ├── src/
+│       │   ├── routes/         # Express route handlers
+│       │   ├── middleware/     # Error handling, logging
+│       │   ├── config/         # Configuration
+│       │   └── app.ts          # Express app setup
+│       ├── .env
+│       └── package.json
 └── README.md
 ```
 
@@ -62,11 +63,10 @@ stellara/
 
 | Layer      | Technology                          |
 |------------|-------------------------------------|
-| Frontend   | React 18, React Router, Recharts    |
+| Frontend   | React 19, TanStack Router, TanStack Query |
 | Backend    | Node.js, Express                    |
 | Styling    | Tailwind CSS                        |
-| AI         | Anthropic Claude API                |
-| NASA APIs  | APOD, MarsRover, EPIC, NeoWs        |
+| NASA APIs  | APOD, EPIC, NeoWs, Images           |
 | Deployment | Vercel (frontend), Render (backend) |
 
 ---
@@ -85,8 +85,8 @@ stellara/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/stellara.git
-cd stellara
+git clone https://github.com/your-username/Astrova.git
+cd Astrova
 ```
 
 ---
@@ -94,16 +94,19 @@ cd stellara
 ### 2. Set Up the Backend
 
 ```bash
-cd backend
+cd BackEnd/ts-node-express
 npm install
 ```
 
-Create a `.env` file in the `backend/` directory:
+Create a `.env` file in the `BackEnd/ts-node-express/` directory:
 
 ```env
-PORT=5000
+PORT=3000
 NASA_API_KEY=your_nasa_api_key_here
-ANTHROPIC_API_KEY=your_anthropic_api_key_here   # optional
+NASA_BASE_URL=https://api.nasa.gov/
+EPIC_BASE_URL=https://epic.gsfc.nasa.gov/
+IMAGES_BASE_URL=https://images-api.nasa.gov/
+ALLOWED_ORIGINS=http://localhost:5173
 ```
 
 Start the backend server:
@@ -112,7 +115,7 @@ Start the backend server:
 npm run dev
 ```
 
-The backend will run at `http://localhost:5000`
+The backend will run at `http://localhost:3000`
 
 ---
 
@@ -121,60 +124,72 @@ The backend will run at `http://localhost:5000`
 Open a new terminal:
 
 ```bash
-cd frontend
+cd FrontEnd/astrova-project
 npm install
 ```
 
-Create a `.env` file in the `frontend/` directory:
+Create a `.env` file in the `FrontEnd/astrova-project/` directory:
 
 ```env
-REACT_APP_API_URL=http://localhost:5000
+VITE_API_URL=http://localhost:3000
 ```
 
 Start the frontend:
 
 ```bash
-npm start
+npm run dev
 ```
 
-The app will open at `http://localhost:3000`
+The app will open at `http://localhost:5173`
 
 ---
 
 ## 🌍 Deployment
 
+### Live Demo
+- **Frontend:** https://astrova.josegale.com/
+- **Backend API:** https://astrova-xwmj.onrender.com/
+
 ### Frontend → Vercel
 
 1. Push your code to GitHub
 2. Import the repo on [vercel.com](https://vercel.com)
-3. Set the **Root Directory** to `frontend`
-4. Add environment variable: `REACT_APP_API_URL=https://your-backend.onrender.com`
-5. Deploy
+3. Set the **Root Directory** to `FrontEnd/astrova-project`
+4. Set **Build Command** to `npm run build`
+5. Set **Output Directory** to `dist`
+6. Add environment variable: `VITE_API_URL=https://astrova-xwmj.onrender.com`
+7. Deploy
 
 ### Backend → Render
 
 1. Create a new **Web Service** on [render.com](https://render.com)
 2. Connect the same GitHub repo
-3. Set the **Root Directory** to `backend`
+3. Set the **Root Directory** to `BackEnd/ts-node-express`
 4. Set **Build Command** to `npm install`
-5. Set **Start Command** to `node src/index.js`
-6. Add environment variables: `NASA_API_KEY` and `ANTHROPIC_API_KEY`
+5. Set **Start Command** to `npx tsx src/server.ts`
+6. Add environment variables:
+   - `NASA_API_KEY`
+   - `NASA_BASE_URL=https://api.nasa.gov/`
+   - `EPIC_BASE_URL=https://epic.gsfc.nasa.gov/`
+   - `IMAGES_BASE_URL=https://images-api.nasa.gov/`
+   - `ALLOWED_ORIGINS=https://astrova.josegale.com`
 7. Deploy
 
 ---
 
 ## 📡 API Endpoints
 
-| Method | Endpoint                        | Description                        |
-|--------|---------------------------------|------------------------------------|
-| GET    | `/api/apod`                     | Astronomy Picture of the Day       |
-| GET    | `/api/apod?date=YYYY-MM-DD`     | APOD for a specific date           |
-| GET    | `/api/mars/photos`              | Mars Rover photos                  |
-| GET    | `/api/mars/photos?rover=curiosity&sol=1000` | Filter by rover and sol |
-| GET    | `/api/asteroids`                | Near-Earth objects (today)         |
-| GET    | `/api/asteroids?start=YYYY-MM-DD&end=YYYY-MM-DD` | Asteroids by date range |
-| GET    | `/api/epic`                     | Latest EPIC Earth images           |
-| GET    | `/api/ai/summary`               | AI-generated summary of space data |
+| Method | Endpoint                                     | Description                        |
+|--------|---------------------------------------------|------------------------------------|
+| GET    | `/api/nasa/apod`                            | Astronomy Picture of the Day       |
+| GET    | `/api/nasa/apod?date=YYYY-MM-DD`           | APOD for a specific date           |
+| GET    | `/api/nasa/asteroids`                      | Near-Earth objects (today)         |
+| GET    | `/api/nasa/asteroids?start=YYYY-MM-DD&end=YYYY-MM-DD` | Asteroids by date range |
+| GET    | `/api/nasa/epic`                           | Latest EPIC Earth images           |
+| GET    | `/api/nasa/epic/dates`                     | Available EPIC dates               |
+| GET    | `/api/nasa/epic/:date`                     | EPIC images for specific date      |
+| GET    | `/api/nasa/images/search?q=query`           | Search NASA Image Library          |
+| GET    | `/api/nasa/images/:id`                      | Get image assets by ID             |
 
 ---
 
@@ -199,7 +214,7 @@ This project is licensed under the **MIT License** — see below for details.
 ```
 MIT License
 
-Copyright (c) 2025 Stellara
+Copyright (c) 2025 Astrova
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -225,58 +240,57 @@ SOFTWARE.
 ## ✅ To Do
 
 ### 🔧 Backend
-- [ ] Set up Express server with basic middleware (cors, helmet, dotenv)
-- [ ] Create NASA API service layer (base URL, key injection)
-- [ ] Build `/api/apod` route — single day and date range
-- [ ] Build `/api/mars/photos` route with rover and sol filters
-- [ ] Build `/api/asteroids` route with date range support
-- [ ] Build `/api/epic` route for Earth imagery
-- [ ] Add centralised error handling middleware
+- [x] Set up Express server with basic middleware (cors, dotenv)
+- [ ] Set up Express server with helmet
+- [x] Create NASA API service layer (base URL, key injection)
+- [x] Build `/api/nasa/apod` route — single day and date range
+- [x] Build `/api/nasa/asteroids` route with date range support
+- [x] Build `/api/nasa/epic` route for Earth imagery
+- [x] Build `/api/nasa/images` routes for NASA Image Library
+- [x] Add centralised error handling middleware
 - [ ] Add request rate limiting to protect the NASA API key
 - [ ] Add response caching (e.g. node-cache) to reduce duplicate API calls
 - [ ] Add input validation and sanitisation
 - [ ] Set up environment variable validation on startup
 - [ ] Write Jest unit tests for routes and services
-- [ ] Add logging (e.g. morgan or winston)
+- [x] Add logging middleware
 
 ### 🎨 Frontend
-- [ ] Scaffold React app with folder structure (pages, components, hooks, services)
-- [ ] Set up React Router with routes for each NASA feature
+- [x] Scaffold React app with folder structure (pages, components, hooks, services)
+- [x] Set up TanStack Router with file-based routes
 - [ ] Build shared layout (navbar, sidebar, footer)
-- [ ] Build APOD page with image display and date picker
-- [ ] Build Mars Rover gallery page with rover and sol filters
-- [ ] Build Asteroid Tracker page with date range selector
-- [ ] Build EPIC Earth Imagery viewer
-- [ ] Build global loading spinner / skeleton screens
-- [ ] Build global error boundary and error states
-- [ ] Add Recharts visualisations for asteroid size and distance data
-- [ ] Add Recharts chart for Mars rover photo counts by sol
-- [ ] Implement responsive design (mobile, tablet, desktop)
-- [ ] Apply space-themed UI (dark background, star effects, typography)
-- [ ] Write React Testing Library tests for key components
+- [x] Build APOD page with image display and date picker
+- [x] Build Asteroid Tracker page with date range selector
+- [x] Build EPIC Earth Imagery viewer with carousel
+- [x] Build NASA Image Library with search and detail pages
+- [x] Build global loading spinner
+- [x] Build global error boundary and error states
+- [ ] Add data visualisations for asteroid statistics
+- [x] Implement responsive design (mobile, tablet, desktop)
+- [x] Apply space-themed UI (dark background, star effects, typography)
+- [x] Write React Testing Library tests for key components
 
 ### 🤖 AI Features
 - [ ] Set up Anthropic Claude API integration in backend
-- [ ] Build `/api/ai/summary` endpoint
+- [ ] Build `/api/nasa/ai/summary` endpoint
 - [ ] Add AI-generated description for APOD images
 - [ ] Add AI explanation for asteroid risk and size data
-- [ ] Add AI fun facts panel for Mars rover missions
 - [ ] Add a conversational "Ask about Space" input box
 
 ### 📦 DevOps & Deployment
 - [ ] Add `.env.example` files for both frontend and backend
-- [ ] Add `.gitignore` to exclude `.env` files and `node_modules`
-- [ ] Deploy backend to Render and verify all routes work
-- [ ] Deploy frontend to Vercel with correct environment variables
-- [ ] Test full production flow end-to-end
-- [ ] Add live demo link and screenshots to README
+- [x] Add `.gitignore` to exclude `.env` files and `node_modules`
+- [x] Deploy backend to Render and verify all routes work
+- [x] Deploy frontend to Vercel with correct environment variables
+- [x] Test full production flow end-to-end
+- [x] Add live demo links to README
 
 ### 🌟 Bonus / Nice to Have
 - [ ] Favourite / bookmark feature for APOD images (localStorage)
 - [ ] Share button to copy a link to a specific APOD date
-- [ ] Animated star background on the home page
+- [x] Animated star background on the home page
 - [ ] Dark/light mode toggle
 - [ ] PWA support (offline-friendly)
-- [ ] Search NASA Image & Video Library
+- [x] Search NASA Image Library
 - [ ] ISS real-time location tracker
 - [ ] Keyboard accessibility audit
