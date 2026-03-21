@@ -133,17 +133,29 @@ export interface MediaAsset {
 }
 
 export interface ImageSearchParams {
-    q: string
+    q?: string
     media_type?: 'image' | 'video' | 'audio'
-    page?: number
+    page?: number,
+    nasa_id?: string,
 }
 
 export const searchImages = async (params: ImageSearchParams): Promise<{ collection: { items: MediaAsset[] } }> => {
-    const { data } = await api.get('/api/nasa/images/search', { params })
+    const { data } = await api.get('/api/nasa/images/search', { params });
     return data.data
 }
 
-export const getImageById = async (id: string): Promise<MediaAsset> => {
-    const { data } = await api.get(`/api/nasa/images/${id}`)
-    return data.data
+export const getImageById = async (id: string) => {
+    // call both endpoints in parallel
+    const [searchRes, assetRes] = await Promise.all([
+        api.get(`/api/nasa/images/search`, { params: { nasa_id: id } }),
+        api.get(`/api/nasa/images/${id}`),
+    ]);
+
+    const metadata = searchRes.data.data.collection.items[0];
+    const assets = assetRes.data.data.collection.items;
+
+    return {
+        metadata,   // title, description, date, photographer etc
+        assets,     // array of { href } for all media files
+    };
 }

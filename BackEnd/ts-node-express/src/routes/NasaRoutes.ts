@@ -238,21 +238,24 @@ router.get('/earth/assets', async (req: Request, res: Response, next: NextFuncti
  */
 router.get('/images/search', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { q, media_type, page } = req.query;
+        const { q, media_type, page, nasa_id } = req.query;
 
-        if (!q) {
-            return res.status(400).json({ success: false, error: 'q (search query) is required' });
+        if (!q && !nasa_id) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Either q (search query) or nasa_id is required' 
+            });
         }
 
         const params = new URLSearchParams({
-            api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
             ...(q && { q: q as string }),
             ...(media_type && { media_type: media_type as string }),
             ...(page && { page: page as string }),
+            ...(nasa_id && { nasa_id: nasa_id as string }),
         });
 
         const response = await axios.get(
-            `${process.env.NASA_BASE_URL}images/search?${params}`
+            `${process.env.IMAGES_BASE_URL}search?${params}`
         );
 
         res.json({ success: true, data: response.data });
@@ -270,12 +273,9 @@ router.get('/images/:id', async (req: Request, res: Response, next: NextFunction
     try {
         const { id } = req.params;
 
-        const params = new URLSearchParams({
-            api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
-        });
 
         const response = await axios.get(
-            `${process.env.NASA_BASE_URL}images/${id}?${params}`
+            `${process.env.IMAGES_BASE_URL}asset/${id}`
         );
 
         res.json({ success: true, data: response.data });
