@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import NasaRouter from './routes/NasaRoutes';
+import healthRouter from './routes/health';
 import { errorHandler, notFoundHandler } from './middlewares/errorHandler';
 import { requestLogger } from './middlewares/requestLogger';
 import cors from 'cors';
@@ -37,6 +38,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/astrova')
 
 
 // Routes
+app.use('/api/health', healthRouter);
 app.use('/api/nasa/', NasaRouter);
 
 // Global error handler (should be after routes)
