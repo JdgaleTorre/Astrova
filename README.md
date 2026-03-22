@@ -298,7 +298,7 @@ SOFTWARE.
 - [ ] Add response caching (e.g. node-cache) to reduce duplicate API calls
 - [ ] Add input validation and sanitisation
 - [ ] Set up environment variable validation on startup
-- [ ] Write Jest unit tests for routes and services
+- [x] Write Jest unit tests for routes and services
 - [x] Add logging middleware
 - [x] Add health check endpoint
 
