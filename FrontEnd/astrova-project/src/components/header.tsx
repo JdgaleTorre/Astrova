@@ -3,11 +3,23 @@ import { Menu, Sparkles } from 'lucide-react';
 import { NAVIGATION_LINKS } from '../utils/navigationLinks.tsx';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
+import { StatusIndicator } from './ui/statusIndicator';
+import { useQuery } from '@tanstack/react-query';
+import { checkHealth } from '../services/health';
 import { useState } from 'react';
 
 export function Header() {
     const location = useLocation();
     const [sheetOpen, setSheetOpen] = useState(false);
+
+    const { data: healthData, isError } = useQuery({
+        queryKey: ['backend-health'],
+        queryFn: checkHealth,
+        refetchInterval: 5 * 60 * 1000,
+        retry: 1,
+    });
+
+    const status = !healthData ? 'loading' : isError ? 'offline' : 'online';
 
     return (
         <header className="fixed top-0 z-50 w-full border-b pl-4 border-white/5 backdrop-blur-xl bg-surface/60 shadow-lg shadow-black/20">
@@ -69,11 +81,19 @@ export function Header() {
                                     {item.label}
                                 </Link>
                             ))}
+
+                            <div className="mt-6 pt-6 border-t border-white/10">
+                                <div className="flex items-center justify-between px-4 py-2">
+                                    <span className="text-sm text-muted-foreground">Backend Status</span>
+                                    <StatusIndicator status={status} notShowText />
+                                </div>
+                            </div>
                         </nav>
                     </SheetContent>
                 </Sheet>
 
-                <div className="ml-auto hidden md:block">
+                <div className="ml-auto hidden md:flex items-center gap-4 mr-3">
+                    <StatusIndicator status={status} />
                     <Button
                         variant="outline"
                         size="sm"
