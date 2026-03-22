@@ -140,7 +140,7 @@ function RouteComponent() {
                   </CardContent>
                 </Card>
 
-                <Card className="bg-linear-to-br from-cyan/5 to-transparent border-cyan/10 mt-6 md:col-span-6">
+                <Card className="bg-linear-to-br from-cyan/5 to-transparent border-cyan/10 mt-6 md:col-span-4">
                   <CardHeader>
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 rounded-lg bg-cyan/20 flex items-center justify-center">
