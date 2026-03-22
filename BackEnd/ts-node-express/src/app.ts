@@ -4,28 +4,36 @@ import NasaRouter from './routes/NasaRoutes';
 import healthRouter from './routes/health';
 import { errorHandler, notFoundHandler } from './middlewares/errorHandler';
 import { requestLogger } from './middlewares/requestLogger';
+import { globalLimiter } from './middlewares/rateLimiter';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import helmet from 'helmet';
+
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
 
 const app = express();
 
-app.use(express.json());
-
+app.disable('x-powered-by');
+app.use(helmet());
 app.use(cors({
     origin: (origin, callback) => {
-        // allow requests with no origin (mobile apps, curl, Postman)
-        if (!origin) return callback(null, true);
-
-        if (allowedOrigins.includes(origin)) {
+        if (process.env.NODE_ENV !== 'production') {
+            return callback(null, true);
+        }
+        if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
             callback(new Error(`CORS policy: origin ${origin} is not allowed`));
         }
     },
     methods: ['GET'],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    exposedHeaders: ['X-RateLimit-Remaining', 'X-RateLimit-Reset'],
+    maxAge: 86400,
 }));
+app.use(globalLimiter);
 
 if (process.env.NODE_ENV !== 'production') {
     app.use(requestLogger);
