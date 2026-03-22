@@ -15,6 +15,7 @@ export const Route = createFileRoute('/')({
 function IndexPage() {
     const [isTechStackOpen, setIsTechStackOpen] = useState(false)
 
+
     return <div className="min-h-screen">
         {/* Hero Section */}
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">

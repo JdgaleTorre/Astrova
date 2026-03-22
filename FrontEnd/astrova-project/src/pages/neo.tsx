@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { AlertTriangle, Orbit, Ruler, Calculator, ChevronDown, ArrowUpDown } from 'lucide-react';
+import { AlertTriangle, Orbit, Ruler, Calculator, ChevronDown, ArrowUpDown, Sparkles } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { Button } from '../components/ui/button';
 import { useState } from 'react';
@@ -137,6 +137,22 @@ function RouteComponent() {
                   <CardContent>
                     <div className="text-2xl font-bold text-green-500">{sortedDates.length}</div>
 
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-linear-to-br from-cyan/5 to-transparent border-cyan/10 mt-6 md:col-span-4">
+                  <CardHeader>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-cyan/20 flex items-center justify-center">
+                        <Sparkles className="h-4 w-4 text-cyan" />
+                      </div>
+                      <CardTitle className="text-cyan text-sm">AI Insight</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">
+                      {data.aiSummary}
+                    </p>
                   </CardContent>
                 </Card>
 

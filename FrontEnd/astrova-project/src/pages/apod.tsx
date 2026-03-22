@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { getApod, type ApodParams } from '../services/nasa';
 import { Button } from '../components/ui/button';
-import { Calendar as CalendarIcon, Download, ExternalLink } from 'lucide-react';
+import { Calendar as CalendarIcon, Download, ExternalLink, Sparkles } from 'lucide-react';
 import { Loading } from '../components/ui/loading';
 import { ErrorDisplay } from '../components/ui/error';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -146,6 +146,22 @@ export function ApodPage() {
                                     </div>
                                 </CardContent>
 
+                            </Card>
+
+                            <Card className="bg-linear-to-br from-cyan/5 to-transparent border-cyan/10 mt-6">
+                                <CardHeader>
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-8 h-8 rounded-lg bg-cyan/20 flex items-center justify-center">
+                                            <Sparkles className="h-4 w-4 text-cyan" />
+                                        </div>
+                                        <CardTitle className="text-cyan text-sm">AI Insight</CardTitle>
+                                    </div>
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="text-sm text-muted-foreground">
+                                        {data.ai_summary}
+                                    </p>
+                                </CardContent>
                             </Card>
                         </div>
                     ))}
