@@ -12,6 +12,7 @@ export interface ApodResponse {
     hdurl: string
     media_type: 'image' | 'video'
     copyright?: string
+    ai_summary: string
 }
 
 export interface ApodParams {
