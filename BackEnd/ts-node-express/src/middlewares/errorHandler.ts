@@ -35,7 +35,7 @@ export const errorHandler = (
   err: AppError | AxiosError,
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction,
 ) => {
   // Log full error in development only
   if (process.env.NODE_ENV !== 'production') {
@@ -58,7 +58,9 @@ export const errorHandler = (
         error: {
           type: 'NASA_API_ERROR',
           status: nasaStatus,
-          message: NASA_ERROR_MESSAGES[nasaStatus] ?? `NASA API responded with status ${nasaStatus}.`,
+          message:
+            NASA_ERROR_MESSAGES[nasaStatus] ??
+            `NASA API responded with status ${nasaStatus}.`,
           nasa_url: nasaUrl,
           nasa_response: nasaData,
           timestamp: new Date().toISOString(),
@@ -73,7 +75,8 @@ export const errorHandler = (
         error: {
           type: 'NASA_UNREACHABLE',
           code: axiosErr.code,
-          message: 'Could not reach the NASA API — it may be down or your network is unavailable.',
+          message:
+            'Could not reach the NASA API — it may be down or your network is unavailable.',
           nasa_url: nasaUrl,
           timestamp: new Date().toISOString(),
         },
