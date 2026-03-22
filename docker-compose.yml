@@ -20,6 +20,7 @@ services:
     volumes:
       - ./BackEnd/ts-node-express:/usr/src/app
       - /usr/src/app/node_modules
+    tty: true
 
   mongodb:
     image: mongo:8.2

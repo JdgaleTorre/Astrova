@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import axios from 'axios';
-import { generateAsteroidSummary } from '../services/aiService';
+import { getAiResponse } from '../services/aiService';
 
 const router = Router();
 
@@ -25,11 +25,44 @@ router.get('/apod', async (req: Request, res: Response, next: NextFunction) => {
             ...(count && { count: count as string }),
         });
 
-        const response = await axios.get(
+        const { data } = await axios.get(
             `${process.env.NASA_BASE_URL}planetary/apod?${params}`
         );
 
-        res.json({ success: true, data: response.data });
+        // NASA returns array for ranges, single object for single date
+        // normalise to always be an array
+        const apods = Array.isArray(data) ? data : [data];
+
+        // ── Generate AI summaries ─────────────────────────
+        let aiSummaries: string[] = [];
+
+        if (process.env.OPENAI_API_KEY) {
+            try {
+                aiSummaries = await Promise.all(
+                    apods.map((apod) => {
+                        const prompt = `Explain this NASA astronomy picture in 2-3 sentences 
+                                        for a general audience: "${apod.explanation}"`;
+                        return getAiResponse(prompt);
+                    })
+                );
+            } catch (aiError) {
+                console.error('AI summary generation failed:', aiError);
+                aiSummaries = apods.map(() => '');
+            }
+        }
+
+        // ── Attach AI summary to each APOD ───────────────
+        const enrichedData = apods.map((apod, index) => ({
+            ...apod,
+            ai_summary: aiSummaries[index] || null,
+        }));
+
+        res.json({
+            success: true,
+            // return array if range was requested, single object if single date
+            data: Array.isArray(data) ? enrichedData : enrichedData[0],
+        });
+
     } catch (error) {
         next(error);
     }
@@ -109,6 +142,43 @@ router.get('/epic/:date', async (req: Request, res: Response, next: NextFunction
     }
 });
 
+const summariseNeoData = (data: any) => {
+    const allAsteroids = Object.values(data.near_earth_objects).flat() as any[];
+
+    return {
+        total: data.element_count,
+        date_range: Object.keys(data.near_earth_objects).sort(),
+        hazardous: allAsteroids.filter(a => a.is_potentially_hazardous_asteroid).map(a => ({
+            name: a.name,
+            diameter: a.estimated_diameter.meters,
+            velocity: a.close_approach_data[0].relative_velocity.kilometers_per_hour,
+            distance: a.close_approach_data[0].miss_distance.kilometers,
+        })),
+        closest: allAsteroids
+            .sort((a, b) =>
+                parseFloat(a.close_approach_data[0].miss_distance.kilometers) -
+                parseFloat(b.close_approach_data[0].miss_distance.kilometers)
+            )
+            .slice(0, 3)
+            .map(a => ({
+                name: a.name,
+                distance: a.close_approach_data[0].miss_distance.kilometers,
+                diameter: a.estimated_diameter.meters,
+            })),
+        largest: allAsteroids
+            .sort((a, b) =>
+                b.estimated_diameter.meters.estimated_diameter_max -
+                a.estimated_diameter.meters.estimated_diameter_max
+            )
+            .slice(0, 3)
+            .map(a => ({
+                name: a.name,
+                diameter: a.estimated_diameter.meters,
+            })),
+    };
+};
+
+
 // ─── NeoWs — Near Earth Object Web Service ────────────────
 /**
  * GET /api/nasa/asteroids
@@ -132,20 +202,23 @@ router.get('/asteroids', async (req: Request, res: Response, next: NextFunction)
 
         const nasaData = response.data;
 
+        const processedData = summariseNeoData(nasaData)
+
         let aiSummary = null;
         if (process.env.OPENAI_API_KEY) {
             try {
-                aiSummary = await generateAsteroidSummary(nasaData);
+                const prompt = `You are a space educator. Given this NASA Near Earth Objects data for a date range, 
+                        provide a short and engaging insight (3-4 sentences) for a general audience. 
+                        Highlight the most interesting findings such as the closest approach, largest asteroid, 
+                        any potentially hazardous ones, and overall risk level. Keep it factual but exciting.
+
+                        Data: ${JSON.stringify(processedData)}`;
+                aiSummary = await getAiResponse(prompt);
             } catch (aiError) {
                 console.error('AI summary generation failed:', aiError);
             }
         }
 
-        console.log({
-            success: true,
-            data: nasaData,
-            aiSummary
-        })
         res.json({
             success: true,
             data: nasaData,

@@ -1,37 +1,38 @@
 import OpenAI from 'openai';
+import crypto from 'crypto';
+import { AiCache } from '../models/aiCache.js';
 
-const openai = new OpenAI({
+const client = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-export const generateAsteroidSummary = async (asteroidData: any): Promise<any> => {
-    const prompt = `Analyze this Near-Earth Object (NEO) data and provide an informative summary:
+// generate a unique key from the prompt
+const generateKey = (prompt: string): string => {
+    return crypto.createHash('md5').update(prompt).digest('hex');
+};
 
-Asteroid Data:
-${JSON.stringify(asteroidData, null, 2)}
+export const getAiResponse = async (prompt: string): Promise<string> => {
+    const key = generateKey(prompt);
 
-Provide a concise summary in JSON format with:
-- "title": A descriptive title about these asteroids
-- "summary": An informative 2-3 paragraph summary explaining the data
-- "keyInsights": Array of 3-5 key insights from the data
-- "threatAssessment": Assessment of any potentially hazardous asteroids`;
+    // ── Check cache first ─────────────────────────────────
+    const cached = await AiCache.findOne({ key });
+    if (cached) {
+        console.log('✅ AI cache hit:', key);
+        return cached.response;
+    }
 
-    const response = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [
-            {
-                role: "system",
-                content: "You are a knowledgeable astronomy expert providing clear, informative summaries about near-Earth objects."
-            },
-            {
-                role: "user",
-                content: prompt
-            }
-        ],
-        response_format: { type: "json_object" },
-        max_tokens: 1000,
+    // ── Call OpenAI if not cached ─────────────────────────
+    console.log('🤖 Calling OpenAI for:', key);
+    const completion = await client.chat.completions.create({
+        model: 'gpt-4o-mini',   // cheap and fast
+        max_tokens: 500,
+        messages: [{ role: 'user', content: prompt }],
     });
 
-    const content = response.choices[0].message.content;
-    return content ? JSON.parse(content) : null;
+    const response = completion.choices[0].message.content || '';
+
+    // ── Save to cache ─────────────────────────────────────
+    await AiCache.create({ key, prompt, response });
+
+    return response;
 };
