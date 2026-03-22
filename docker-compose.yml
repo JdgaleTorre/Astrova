@@ -1,0 +1,38 @@
+services:
+  backend:
+    build:
+      context: ./BackEnd/ts-node-express
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NASA_API_KEY=${NASA_API_KEY}
+      - NASA_BASE_URL=https://api.nasa.gov/
+      - EPIC_BASE_URL=https://epic.gsfc.nasa.gov/
+      - IMAGES_BASE_URL=https://images-api.nasa.gov/
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ALLOWED_ORIGINS=http://localhost:5173
+      - MONGODB_URI=mongodb://mongodb:27017/astrova
+      - PORT=3000
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    volumes:
+      - ./BackEnd/ts-node-express:/usr/src/app
+      - /usr/src/app/node_modules
+    tty: true
+
+  mongodb:
+    image: mongo:8.2
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mongo_data:

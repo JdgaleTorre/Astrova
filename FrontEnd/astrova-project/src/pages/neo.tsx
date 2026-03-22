@@ -39,6 +39,7 @@ function RouteComponent() {
     queryFn: () => getAsteroids(params),
   })
 
+
   if (isLoading) return <Loading />
 
   const sortedDates = data ? Object.keys(data.near_earth_objects).sort() : [];

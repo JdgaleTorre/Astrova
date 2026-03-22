@@ -1,8 +1,10 @@
+import 'dotenv/config';
 import express from 'express';
 import NasaRouter from './routes/NasaRoutes';
 import { errorHandler, notFoundHandler } from './middlewares/errorHandler';
 import { requestLogger } from './middlewares/requestLogger';
 import cors from 'cors';
+import mongoose from 'mongoose';
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
 
@@ -27,6 +29,12 @@ app.use(cors({
 if (process.env.NODE_ENV !== 'production') {
     app.use(requestLogger);
 }
+
+// ── Connect to MongoDB ────────────────────────────────────
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/astrova')
+    .then(() => console.log('✅ MongoDB connected'))
+    .catch((err) => console.error('❌ MongoDB connection error:', err));
+
 
 // Routes
 app.use('/api/nasa/', NasaRouter);

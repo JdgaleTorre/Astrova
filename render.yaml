@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: astrova-backend
+    env: docker
+    dockerfilePath: ./BackEnd/ts-node-express/Dockerfile
+    dockerContext: ./BackEnd/ts-node-express
+    plan: free
+    envVars:
+      - key: NASA_API_KEY
+        sync: false
+      - key: NASA_BASE_URL
+        value: https://api.nasa.gov/
+      - key: EPIC_BASE_URL
+        value: https://epic.gsfc.nasa.gov/
+      - key: IMAGES_BASE_URL
+        value: https://images-api.nasa.gov/
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        value: https://astrova.josegale.com
+      - key: PORT
+        value: "3000"
+      - key: MONGODB_URI
+        fromService:
+          name: mongodb
+          type: pserv
+          property: connectionString
+
+  - type: pserv
+    name: mongodb
+    env: docker
+    image:
+      url: docker.io/library/mongo:8.2
+    autoDeploy: false
+    disk:
+      name: data
+      mountPath: /data/db
+      sizeGB: 10
