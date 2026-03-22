@@ -29,6 +29,9 @@ The backend acts as a secure proxy between the frontend and NASA's APIs, keeping
 - 🌍 **EPIC Earth Imagery** — View stunning full-disc photos of Earth from space
 - 📸 **NASA Image Library** — Search and explore NASA's vast collection of images, videos, and audio
 - 📱 **Responsive Design** — Fully optimised for desktop, tablet, and mobile
+- 🐳 **Docker Ready** — Full stack deployment with Docker Compose
+- ⚡ **Rate Limiting** — API protection with 100 requests per 15 minutes
+- 🛡️ **Security Hardened** — Helmet.js headers, environment-aware CORS policies
 
 ---
 
@@ -61,13 +64,15 @@ Astrova/
 
 ## 🛠️ Tech Stack
 
-| Layer      | Technology                          |
-|------------|-------------------------------------|
-| Frontend   | React 19, TanStack Router, TanStack Query |
-| Backend    | Node.js, Express                    |
-| Styling    | Tailwind CSS                        |
-| NASA APIs  | APOD, EPIC, NeoWs, Images           |
-| Deployment | Vercel (frontend), Render (backend) |
+| Layer        | Technology                                      |
+|--------------|------------------------------------------------|
+| Frontend     | React 19, TanStack Router, TanStack Query       |
+| Backend      | Node.js, Express, Helmet, express-rate-limit    |
+| Database     | MongoDB                                         |
+| Styling      | Tailwind CSS                                    |
+| AI Integration | OpenAI API (optional)                        |
+| NASA APIs    | APOD, EPIC, NeoWs, Images                      |
+| Deployment   | Vercel (frontend), Render (backend), Docker    |
 
 ---
 
@@ -77,8 +82,9 @@ Astrova/
 
 - Node.js v18 or higher
 - npm or yarn
+- Docker and Docker Compose (optional, for containerized deployment)
 - A NASA API key → [Get one free at api.nasa.gov](https://api.nasa.gov/)
-- An Anthropic API key (optional, for AI features) → [console.anthropic.com](https://console.anthropic.com/)
+- An OpenAI API key (optional, for AI features) → [platform.openai.com](https://platform.openai.com/)
 
 ---
 
@@ -102,11 +108,14 @@ Create a `.env` file in the `BackEnd/ts-node-express/` directory:
 
 ```env
 PORT=3000
+NODE_ENV=development
 NASA_API_KEY=your_nasa_api_key_here
 NASA_BASE_URL=https://api.nasa.gov/
 EPIC_BASE_URL=https://epic.gsfc.nasa.gov/
 IMAGES_BASE_URL=https://images-api.nasa.gov/
+OPENAI_API_KEY=your_openai_api_key_here
 ALLOWED_ORIGINS=http://localhost:5173
+MONGODB_URI=mongodb://localhost:27017/astrova
 ```
 
 Start the backend server:
@@ -144,6 +153,39 @@ The app will open at `http://localhost:5173`
 
 ---
 
+## 🐳 Docker Deployment
+
+### Quick Start
+
+```bash
+# Create .env file in project root
+cp .env.example .env
+# Edit .env with your API keys
+
+# Start all services (backend + MongoDB)
+docker-compose up -d
+
+# View logs
+docker-compose logs -f backend
+
+# Stop services
+docker-compose down
+```
+
+### Services
+
+| Service   | Port  | Description                    |
+|-----------|-------|--------------------------------|
+| backend   | 3000  | Express API server             |
+| mongodb   | 27017 | MongoDB database               |
+
+### Accessing the Application
+
+- **API:** http://localhost:3000/api/health
+- **MongoDB:** mongodb://localhost:27017
+
+---
+
 ## 🌍 Deployment
 
 ### Live Demo
@@ -160,20 +202,23 @@ The app will open at `http://localhost:5173`
 6. Add environment variable: `VITE_API_URL=https://astrova-xwmj.onrender.com`
 7. Deploy
 
-### Backend → Render
+### Backend → Render (Auto-Deploy with render.yaml)
 
-1. Create a new **Web Service** on [render.com](https://render.com)
-2. Connect the same GitHub repo
-3. Set the **Root Directory** to `BackEnd/ts-node-express`
-4. Set **Build Command** to `npm install`
-5. Set **Start Command** to `npx tsx src/server.ts`
-6. Add environment variables:
-   - `NASA_API_KEY`
-   - `NASA_BASE_URL=https://api.nasa.gov/`
-   - `EPIC_BASE_URL=https://epic.gsfc.nasa.gov/`
-   - `IMAGES_BASE_URL=https://images-api.nasa.gov/`
-   - `ALLOWED_ORIGINS=https://astrova.josegale.com`
-7. Deploy
+This project includes a `render.yaml` file that configures the backend deployment automatically.
+
+1. Push your code to GitHub
+2. Go to [render.com](https://render.com) and create a new **Blueprint**
+3. Connect your GitHub repo
+4. Render will detect `render.yaml` and show the deployment configuration
+
+5. Add environment variables in the Render dashboard (marked as `sync: false` in render.yaml):
+   - `NASA_API_KEY` — Your NASA API key
+   - `OPENAI_API_KEY` — Your OpenAI API key (optional)
+   - `MONGODB_URI` — Your MongoDB connection string
+
+6. Deploy — Render will automatically build and deploy using the `render.yaml` configuration
+
+**Note:** The `render.yaml` uses Docker mode with the included Dockerfile.
 
 ---
 
@@ -181,6 +226,7 @@ The app will open at `http://localhost:5173`
 
 | Method | Endpoint                                     | Description                        |
 |--------|---------------------------------------------|------------------------------------|
+| GET    | `/api/health`                               | Backend health & MongoDB status    |
 | GET    | `/api/nasa/apod`                            | Astronomy Picture of the Day       |
 | GET    | `/api/nasa/apod?date=YYYY-MM-DD`           | APOD for a specific date           |
 | GET    | `/api/nasa/asteroids`                      | Near-Earth objects (today)         |
@@ -241,19 +287,20 @@ SOFTWARE.
 
 ### 🔧 Backend
 - [x] Set up Express server with basic middleware (cors, dotenv)
-- [ ] Set up Express server with helmet
+- [x] Set up Express server with helmet
 - [x] Create NASA API service layer (base URL, key injection)
 - [x] Build `/api/nasa/apod` route — single day and date range
 - [x] Build `/api/nasa/asteroids` route with date range support
 - [x] Build `/api/nasa/epic` route for Earth imagery
 - [x] Build `/api/nasa/images` routes for NASA Image Library
 - [x] Add centralised error handling middleware
-- [ ] Add request rate limiting to protect the NASA API key
+- [x] Add request rate limiting to protect the NASA API key
 - [ ] Add response caching (e.g. node-cache) to reduce duplicate API calls
 - [ ] Add input validation and sanitisation
 - [ ] Set up environment variable validation on startup
 - [ ] Write Jest unit tests for routes and services
 - [x] Add logging middleware
+- [x] Add health check endpoint
 
 ### 🎨 Frontend
 - [x] Scaffold React app with folder structure (pages, components, hooks, services)
@@ -271,19 +318,18 @@ SOFTWARE.
 - [x] Write React Testing Library tests for key components
 
 ### 🤖 AI Features
-- [ ] Set up Anthropic Claude API integration in backend
-- [ ] Build `/api/nasa/ai/summary` endpoint
-- [ ] Add AI-generated description for APOD images
-- [ ] Add AI explanation for asteroid risk and size data
-- [ ] Add a conversational "Ask about Space" input box
+- [x] Set up OpenAI API integration in backend
+- [x] Add AI-generated description for APOD images
+- [x] Add AI explanation for asteroid risk and size data
 
 ### 📦 DevOps & Deployment
-- [ ] Add `.env.example` files for both frontend and backend
+- [x] Add `.env.example` files for both frontend and backend
 - [x] Add `.gitignore` to exclude `.env` files and `node_modules`
 - [x] Deploy backend to Render and verify all routes work
 - [x] Deploy frontend to Vercel with correct environment variables
 - [x] Test full production flow end-to-end
 - [x] Add live demo links to README
+- [x] Add Docker Compose setup
 
 ### 🌟 Bonus / Nice to Have
 - [ ] Favourite / bookmark feature for APOD images (localStorage)
