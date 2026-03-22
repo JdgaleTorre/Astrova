@@ -5,7 +5,12 @@ services:
     dockerfilePath: ./BackEnd/ts-node-express/Dockerfile
     dockerContext: ./BackEnd/ts-node-express
     plan: free
+    healthCheckPath: /api/health
     envVars:
+      - key: PORT
+        value: "3000"
+      - key: NODE_ENV
+        value: production
       - key: NASA_API_KEY
         sync: false
       - key: NASA_BASE_URL
@@ -18,21 +23,5 @@ services:
         sync: false
       - key: ALLOWED_ORIGINS
         value: https://astrova.josegale.com
-      - key: PORT
-        value: "3000"
       - key: MONGODB_URI
-        fromService:
-          name: mongodb
-          type: pserv
-          property: connectionString
-
-  - type: pserv
-    name: mongodb
-    env: docker
-    image:
-      url: docker.io/library/mongo:8.2
-    autoDeploy: false
-    disk:
-      name: data
-      mountPath: /data/db
-      sizeGB: 10
+        sync: false
