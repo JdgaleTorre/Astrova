@@ -82,6 +82,7 @@ export interface NeoAsteroid {
 export interface NeoFeedResponse {
     element_count: number
     near_earth_objects: Record<string, NeoAsteroid[]>
+    aiSummary: string
 }
 
 export interface NeoParams {
@@ -91,7 +92,7 @@ export interface NeoParams {
 
 export const getAsteroids = async (params?: NeoParams): Promise<NeoFeedResponse> => {
     const { data } = await api.get('/api/nasa/asteroids', { params })
-    return data.data
+    return { ...data.data, aiSummary: data.aiSummary }
 }
 
 export const getAsteroidById = async (id: string): Promise<NeoAsteroid> => {
