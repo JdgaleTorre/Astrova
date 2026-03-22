@@ -6,6 +6,7 @@ services:
     ports:
       - "3000:3000"
     environment:
+      - NODE_ENV=production
       - NASA_API_KEY=${NASA_API_KEY}
       - NASA_BASE_URL=https://api.nasa.gov/
       - EPIC_BASE_URL=https://epic.gsfc.nasa.gov/
