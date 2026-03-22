@@ -15,7 +15,7 @@ export function StatusIndicator({ status, className, notShowText = false }: Stat
 
     return (
         <div className={cn('flex items-center gap-2', className)}>
-            <div className={cn('w-2 h-2 rounded-full shadow-lg', statusConfig[status])} />
+            <div id="indicator" className={cn('w-2 h-2 rounded-full shadow-lg', statusConfig[status])} />
             {!notShowText && <span className="text-xs text-muted-foreground">
                 Backend {status === 'online' ? 'Online' : status === 'offline' ? 'Offline' : ''}
             </span>}

@@ -19,7 +19,7 @@ export function Header() {
         retry: 1,
     });
 
-    const status = !healthData ? 'loading' : isError ? 'offline' : 'online';
+    const status = healthData ? 'online' : isError ? 'offline' : 'loading';
 
     return (
         <header className="fixed top-0 z-50 w-full border-b pl-4 border-white/5 backdrop-blur-xl bg-surface/60 shadow-lg shadow-black/20">
