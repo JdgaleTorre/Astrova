@@ -2,7 +2,14 @@ import { useNavigate } from '@tanstack/react-router';
 import type { ApodResponse } from '../services/nasa';
 import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Image, Video, Calendar, Volume2, Bookmark, BookmarkCheck } from 'lucide-react';
+import {
+  Image,
+  Video,
+  Calendar,
+  Volume2,
+  Bookmark,
+  BookmarkCheck,
+} from 'lucide-react';
 import { isSaved, toggleSaved } from '../services/storage';
 import { useState } from 'react';
 
@@ -18,7 +25,9 @@ export default function ApodCardCompact(data: ApodResponse) {
   return (
     <div
       key={data.date}
-      onClick={() => navigate({ to: '/apod/$date', params: { date: data.date } })}
+      onClick={() =>
+        navigate({ to: '/apod/$date', params: { date: data.date } })
+      }
       className="block cursor-pointer"
     >
       <Card className="bg-card/50 group hover:border-cyan/30 h-full overflow-hidden border-white/5 backdrop-blur-sm transition-all">
@@ -36,7 +45,7 @@ export default function ApodCardCompact(data: ApodResponse) {
                 loading="lazy"
               />
               <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                <Video className="text-white/80 h-12 w-12" />
+                <Video className="h-12 w-12 text-white/80" />
               </div>
             </div>
           ) : (
@@ -50,7 +59,7 @@ export default function ApodCardCompact(data: ApodResponse) {
           <div className="absolute top-2 right-2 flex gap-2">
             <button
               type="button"
-              className="bg-background/80 inline-flex items-center justify-center rounded-full border border-white/10 p-1.5 text-xs font-medium backdrop-blur-sm transition-colors hover:bg-cyan/20"
+              className="bg-background/80 hover:bg-cyan/20 inline-flex items-center justify-center rounded-full border border-white/10 p-1.5 text-xs font-medium backdrop-blur-sm transition-colors"
               onClick={(e) => {
                 e.stopPropagation();
                 const savedItem = {
