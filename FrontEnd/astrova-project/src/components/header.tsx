@@ -37,26 +37,30 @@ export function Header() {
 
         {/* Desktop Navigation */}
         <nav className="hidden flex-1 items-center justify-center gap-1 md:flex">
-          {NAVIGATION_LINKS.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`group relative rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                location.pathname === item.path
-                  ? 'text-cyan'
-                  : 'text-muted-foreground hover:text-soft-white'
-              }`}
-              id={
-                location.pathname === item.path ? 'active-nav-link' : undefined
-              }
-            >
-              {item.label}
-              {location.pathname === item.path && (
-                <span className="bg-cyan shadow-cyan/50 absolute bottom-0 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full shadow-lg" />
-              )}
-              <span className="bg-cyan/0 group-hover:bg-cyan/5 absolute inset-0 rounded-lg transition-colors" />
-            </Link>
-          ))}
+          {NAVIGATION_LINKS.map((item) => {
+            const isActive =
+              item.path === '/'
+                ? location.pathname === '/'
+                : location.pathname.startsWith(item.path);
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`group relative rounded-lg px-4 py-2 text-sm font-medium transition-all ${
+                  isActive
+                    ? 'text-cyan'
+                    : 'text-muted-foreground hover:text-soft-white'
+                }`}
+                id={isActive ? 'active-nav-link' : undefined}
+              >
+                {item.label}
+                {isActive && (
+                  <span className="bg-cyan shadow-cyan/50 absolute bottom-0 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full shadow-lg" />
+                )}
+                <span className="bg-cyan/0 group-hover:bg-cyan/5 absolute inset-0 rounded-lg transition-colors" />
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Mobile Navigation */}
