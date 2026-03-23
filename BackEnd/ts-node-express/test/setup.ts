@@ -1,7 +1,7 @@
 // Set test environment variables
 process.env.NODE_ENV = 'test';
 process.env.NASA_API_KEY = 'test_key';
-process.env.OPENAI_API_KEY = '';
+process.env.OPENAI_API_KEY = 'test_openai_key';
 process.env.NASA_BASE_URL = 'https://api.nasa.gov/';
 process.env.EPIC_BASE_URL = 'https://epic.gsfc.nasa.gov/';
 process.env.IMAGES_BASE_URL = 'https://images-api.nasa.gov/';

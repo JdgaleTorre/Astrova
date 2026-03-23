@@ -13,6 +13,7 @@ import {
   imageIdSchema,
   imagesSearchSchema
 } from '../validators/nasa';
+import { config } from '../config/config';
 
 const router = Router();
 
@@ -30,7 +31,7 @@ router.get('/apod', validateData(apodQuerySchema), async (req: Request, res: Res
     const { date, start_date, end_date, count } = req.query;
 
     const params = new URLSearchParams({
-      api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+      api_key: config.NASA_API_KEY || 'DEMO_KEY',
       ...(date && { date: date as string }),
       ...(start_date && { start_date: start_date as string }),
       ...(end_date && { end_date: end_date as string }),
@@ -38,7 +39,7 @@ router.get('/apod', validateData(apodQuerySchema), async (req: Request, res: Res
     });
 
     const { data } = await axios.get(
-      `${process.env.NASA_BASE_URL}planetary/apod?${params}`,
+      `${config.NASA_BASE_URL}planetary/apod?${params}`,
     );
 
     // NASA returns array for ranges, single object for single date
@@ -48,7 +49,7 @@ router.get('/apod', validateData(apodQuerySchema), async (req: Request, res: Res
     // ── Generate AI summaries ─────────────────────────
     let aiSummaries: string[] = [];
 
-    if (process.env.OPENAI_API_KEY) {
+    if (config.OPENAI_API_KEY) {
       try {
         aiSummaries = await Promise.all(
           apods.map((apod) => {
@@ -90,10 +91,10 @@ router.get('/epic', validateData(epicTypeSchema), async (req: Request, res: Resp
     const { type = 'natural' } = req.query;
 
     // const params = new URLSearchParams({
-    //     api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+    //     api_key: config.NASA_API_KEY || 'DEMO_KEY',
     // });
 
-    const response = await axios.get(`${process.env.EPIC_BASE_URL}api/${type}`);
+    const response = await axios.get(`${config.EPIC_BASE_URL}api/${type}`);
 
     res.json({ success: true, data: response.data });
   } catch (error) {
@@ -112,11 +113,11 @@ router.get(
       const { type = 'natural' } = req.query;
 
       // const params = new URLSearchParams({
-      //     api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+      //     api_key: config.NASA_API_KEY || 'DEMO_KEY',
       // });
 
       const response = await axios.get(
-        `${process.env.EPIC_BASE_URL}api/${type}/all`,
+        `${config.EPIC_BASE_URL}api/${type}/all`,
       );
 
       res.json({ success: true, data: response.data });
@@ -141,11 +142,11 @@ router.get(
       const { type = 'natural' } = req.query;
 
       // const params = new URLSearchParams({
-      //     api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+      //     api_key: config.NASA_API_KEY || 'DEMO_KEY',
       // });
 
       const response = await axios.get(
-        `${process.env.EPIC_BASE_URL}api/${type}/date/${date}`,
+        `${config.EPIC_BASE_URL}api/${type}/date/${date}`,
       );
 
       res.json({ success: true, data: response.data });
@@ -210,13 +211,13 @@ router.get(
       const { start_date, end_date } = req.query;
 
       const params = new URLSearchParams({
-        api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+        api_key: config.NASA_API_KEY || 'DEMO_KEY',
         ...(start_date && { start_date: start_date as string }),
         ...(end_date && { end_date: end_date as string }),
       });
 
       const response = await axios.get(
-        `${process.env.NASA_BASE_URL}neo/rest/v1/feed?${params}`,
+        `${config.NASA_BASE_URL}neo/rest/v1/feed?${params}`,
       );
 
       const nasaData = response.data;
@@ -224,7 +225,7 @@ router.get(
       const processedData = summariseNeoData(nasaData);
 
       let aiSummary = null;
-      if (process.env.OPENAI_API_KEY) {
+      if (config.OPENAI_API_KEY) {
         try {
           const prompt = `You are a space educator. Given this NASA Near Earth Objects data for a date range, 
                         provide a short and engaging insight (3-4 sentences) for a general audience. 
@@ -261,11 +262,11 @@ router.get(
       const { id } = req.params;
 
       const params = new URLSearchParams({
-        api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+        api_key: config.NASA_API_KEY || 'DEMO_KEY',
       });
 
       const response = await axios.get(
-        `${process.env.NASA_BASE_URL}neo/rest/v1/neo/${id}?${params}`,
+        `${config.NASA_BASE_URL}neo/rest/v1/neo/${id}?${params}`,
       );
 
       res.json({ success: true, data: response.data });
@@ -297,7 +298,7 @@ router.get(
       }
 
       const params = new URLSearchParams({
-        api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+        api_key: config.NASA_API_KEY || 'DEMO_KEY',
         ...(lon && { lon: lon as string }),
         ...(lat && { lat: lat as string }),
         ...(dim && { dim: dim as string }),
@@ -305,7 +306,7 @@ router.get(
       });
 
       const response = await axios.get(
-        `${process.env.NASA_BASE_URL}planetary/earth/imagery?${params}`,
+        `${config.NASA_BASE_URL}planetary/earth/imagery?${params}`,
       );
 
       res.json({ success: true, data: response.data });
@@ -336,14 +337,14 @@ router.get(
       }
 
       const params = new URLSearchParams({
-        api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+        api_key: config.NASA_API_KEY || 'DEMO_KEY',
         ...(lon && { lon: lon as string }),
         ...(lat && { lat: lat as string }),
         ...(dim && { dim: dim as string }),
       });
 
       const response = await axios.get(
-        `${process.env.NASA_BASE_URL}planetary/earth/assets?date=${date}&${params}`,
+        `${config.NASA_BASE_URL}planetary/earth/assets?date=${date}&${params}`,
       );
 
       res.json({ success: true, data: response.data });
@@ -382,7 +383,7 @@ router.get(
       });
 
       const response = await axios.get(
-        `${process.env.IMAGES_BASE_URL}search?${params}`,
+        `${config.IMAGES_BASE_URL}search?${params}`,
       );
 
       res.json({ success: true, data: response.data });
@@ -404,7 +405,7 @@ router.get(
       const { id } = req.params;
 
       const response = await axios.get(
-        `${process.env.IMAGES_BASE_URL}asset/${id}`,
+        `${config.IMAGES_BASE_URL}asset/${id}`,
       );
 
       res.json({ success: true, data: response.data });

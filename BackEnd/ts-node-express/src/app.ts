@@ -8,8 +8,11 @@ import { globalLimiter } from './middlewares/rateLimiter';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import helmet from 'helmet';
+import { config } from './config/config';
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
+
+
+const allowedOrigins = config.ALLOWED_ORIGINS?.split(',') || [];
 
 const app = express();
 
@@ -18,7 +21,7 @@ app.use(helmet());
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (process.env.NODE_ENV !== 'production') {
+      if (config.NODE_ENV !== 'production') {
         return callback(null, true);
       }
       if (!origin || allowedOrigins.includes(origin)) {
@@ -36,13 +39,13 @@ app.use(
 );
 app.use(globalLimiter);
 
-if (process.env.NODE_ENV !== 'production') {
+if (config.NODE_ENV !== 'production') {
   app.use(requestLogger);
 }
 
 // ── Connect to MongoDB ────────────────────────────────────
 mongoose
-  .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/astrova')
+  .connect(config.MONGODB_URI || 'mongodb://localhost:27017/astrova')
   .then(() => console.log('✅ MongoDB connected'))
   .catch((err) => console.error('❌ MongoDB connection error:', err));
 

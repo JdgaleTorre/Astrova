@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { AxiosError } from 'axios';
+import { config } from '../config/config';
 
 // ─── Types ────────────────────────────────────────────────
 interface AppError extends Error {
@@ -40,7 +41,7 @@ export const errorHandler = (
   _next: NextFunction,
 ) => {
   // Log full error in development only
-  if (process.env.NODE_ENV !== 'production') {
+  if (config.NODE_ENV !== 'production') {
     console.error(`\n[ERROR] ${req.method} ${req.path}`);
     console.error(`Message : ${err.message}`);
     console.error(`Stack   : ${err.stack}\n`);
@@ -109,7 +110,7 @@ export const errorHandler = (
       type: 'SERVER_ERROR',
       status: statusCode,
       message: err.message || 'An unexpected error occurred.',
-      ...(process.env.NODE_ENV !== 'production' && { stack: err.stack }),
+      ...(config.NODE_ENV !== 'production' && { stack: err.stack }),
       timestamp: new Date().toISOString(),
     },
   });
