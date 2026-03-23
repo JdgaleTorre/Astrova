@@ -1,6 +1,19 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import axios from 'axios';
 import { getAiResponse } from '../services/aiService';
+import { validateData } from '../middlewares/validate';
+import {
+  apodQuerySchema,
+  asteroidIdSchema,
+  asteroidsQuerySchema,
+  earthAssetsSchema,
+  earthImagerySchema,
+  epicDateSchema,
+  epicTypeSchema,
+  imageIdSchema,
+  imagesSearchSchema
+} from '../validators/nasa';
+import { config } from '../config/config';
 
 const router = Router();
 
@@ -13,12 +26,12 @@ const router = Router();
  *   - end_date?: string (YYYY-MM-DD) — end of date range
  *   - count?: number — random images count
  */
-router.get('/apod', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/apod', validateData(apodQuerySchema), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { date, start_date, end_date, count } = req.query;
 
     const params = new URLSearchParams({
-      api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+      api_key: config.NASA_API_KEY || 'DEMO_KEY',
       ...(date && { date: date as string }),
       ...(start_date && { start_date: start_date as string }),
       ...(end_date && { end_date: end_date as string }),
@@ -26,7 +39,7 @@ router.get('/apod', async (req: Request, res: Response, next: NextFunction) => {
     });
 
     const { data } = await axios.get(
-      `${process.env.NASA_BASE_URL}planetary/apod?${params}`,
+      `${config.NASA_BASE_URL}planetary/apod?${params}`,
     );
 
     // NASA returns array for ranges, single object for single date
@@ -36,7 +49,7 @@ router.get('/apod', async (req: Request, res: Response, next: NextFunction) => {
     // ── Generate AI summaries ─────────────────────────
     let aiSummaries: string[] = [];
 
-    if (process.env.OPENAI_API_KEY) {
+    if (config.OPENAI_API_KEY) {
       try {
         aiSummaries = await Promise.all(
           apods.map((apod) => {
@@ -73,15 +86,15 @@ router.get('/apod', async (req: Request, res: Response, next: NextFunction) => {
  * Query params:
  *   - type?: string — 'natural' | 'enhanced' (default: natural)
  */
-router.get('/epic', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/epic', validateData(epicTypeSchema), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { type = 'natural' } = req.query;
 
     // const params = new URLSearchParams({
-    //     api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+    //     api_key: config.NASA_API_KEY || 'DEMO_KEY',
     // });
 
-    const response = await axios.get(`${process.env.EPIC_BASE_URL}api/${type}`);
+    const response = await axios.get(`${config.EPIC_BASE_URL}api/${type}`);
 
     res.json({ success: true, data: response.data });
   } catch (error) {
@@ -95,17 +108,16 @@ router.get('/epic', async (req: Request, res: Response, next: NextFunction) => {
  *   - type?: string — 'natural' | 'enhanced' (default: natural)
  */
 router.get(
-  '/epic/dates',
-  async (req: Request, res: Response, next: NextFunction) => {
+  '/epic/dates', validateData(epicTypeSchema), async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { type = 'natural' } = req.query;
 
       // const params = new URLSearchParams({
-      //     api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+      //     api_key: config.NASA_API_KEY || 'DEMO_KEY',
       // });
 
       const response = await axios.get(
-        `${process.env.EPIC_BASE_URL}api/${type}/all`,
+        `${config.EPIC_BASE_URL}api/${type}/all`,
       );
 
       res.json({ success: true, data: response.data });
@@ -123,18 +135,18 @@ router.get(
  *   - type?: string — 'natural' | 'enhanced' (default: natural)
  */
 router.get(
-  '/epic/:date',
+  '/epic/:date', validateData(epicDateSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { date } = req.params;
       const { type = 'natural' } = req.query;
 
       // const params = new URLSearchParams({
-      //     api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+      //     api_key: config.NASA_API_KEY || 'DEMO_KEY',
       // });
 
       const response = await axios.get(
-        `${process.env.EPIC_BASE_URL}api/${type}/date/${date}`,
+        `${config.EPIC_BASE_URL}api/${type}/date/${date}`,
       );
 
       res.json({ success: true, data: response.data });
@@ -193,19 +205,19 @@ const summariseNeoData = (data: any) => {
  *   - end_date?: string (YYYY-MM-DD) — max 7 days after start_date
  */
 router.get(
-  '/asteroids',
+  '/asteroids', validateData(asteroidsQuerySchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { start_date, end_date } = req.query;
 
       const params = new URLSearchParams({
-        api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+        api_key: config.NASA_API_KEY || 'DEMO_KEY',
         ...(start_date && { start_date: start_date as string }),
         ...(end_date && { end_date: end_date as string }),
       });
 
       const response = await axios.get(
-        `${process.env.NASA_BASE_URL}neo/rest/v1/feed?${params}`,
+        `${config.NASA_BASE_URL}neo/rest/v1/feed?${params}`,
       );
 
       const nasaData = response.data;
@@ -213,7 +225,7 @@ router.get(
       const processedData = summariseNeoData(nasaData);
 
       let aiSummary = null;
-      if (process.env.OPENAI_API_KEY) {
+      if (config.OPENAI_API_KEY) {
         try {
           const prompt = `You are a space educator. Given this NASA Near Earth Objects data for a date range, 
                         provide a short and engaging insight (3-4 sentences) for a general audience. 
@@ -244,17 +256,17 @@ router.get(
  *   - id: string — NASA NeoWs asteroid ID
  */
 router.get(
-  '/asteroids/:id',
+  '/asteroids/:id', validateData(asteroidIdSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
 
       const params = new URLSearchParams({
-        api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+        api_key: config.NASA_API_KEY || 'DEMO_KEY',
       });
 
       const response = await axios.get(
-        `${process.env.NASA_BASE_URL}neo/rest/v1/neo/${id}?${params}`,
+        `${config.NASA_BASE_URL}neo/rest/v1/neo/${id}?${params}`,
       );
 
       res.json({ success: true, data: response.data });
@@ -274,7 +286,7 @@ router.get(
  *   - date?: string (YYYY-MM-DD) — date of imagery (max 30 days ago)
  */
 router.get(
-  '/earth/imagery',
+  '/earth/imagery', validateData(earthImagerySchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { lon, lat, dim, date } = req.query;
@@ -286,7 +298,7 @@ router.get(
       }
 
       const params = new URLSearchParams({
-        api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+        api_key: config.NASA_API_KEY || 'DEMO_KEY',
         ...(lon && { lon: lon as string }),
         ...(lat && { lat: lat as string }),
         ...(dim && { dim: dim as string }),
@@ -294,7 +306,7 @@ router.get(
       });
 
       const response = await axios.get(
-        `${process.env.NASA_BASE_URL}planetary/earth/imagery?${params}`,
+        `${config.NASA_BASE_URL}planetary/earth/imagery?${params}`,
       );
 
       res.json({ success: true, data: response.data });
@@ -313,7 +325,7 @@ router.get(
  *   - dim?: number — box size in degrees
  */
 router.get(
-  '/earth/assets',
+  '/earth/assets', validateData(earthAssetsSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { lon, lat, date, dim } = req.query;
@@ -325,14 +337,14 @@ router.get(
       }
 
       const params = new URLSearchParams({
-        api_key: process.env.NASA_API_KEY || 'DEMO_KEY',
+        api_key: config.NASA_API_KEY || 'DEMO_KEY',
         ...(lon && { lon: lon as string }),
         ...(lat && { lat: lat as string }),
         ...(dim && { dim: dim as string }),
       });
 
       const response = await axios.get(
-        `${process.env.NASA_BASE_URL}planetary/earth/assets?date=${date}&${params}`,
+        `${config.NASA_BASE_URL}planetary/earth/assets?date=${date}&${params}`,
       );
 
       res.json({ success: true, data: response.data });
@@ -351,7 +363,7 @@ router.get(
  *   - page?: number — page number
  */
 router.get(
-  '/images/search',
+  '/images/search', validateData(imagesSearchSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { q, media_type, page, nasa_id } = req.query;
@@ -371,7 +383,7 @@ router.get(
       });
 
       const response = await axios.get(
-        `${process.env.IMAGES_BASE_URL}search?${params}`,
+        `${config.IMAGES_BASE_URL}search?${params}`,
       );
 
       res.json({ success: true, data: response.data });
@@ -387,13 +399,13 @@ router.get(
  *   - id: string — NASA image/video ID
  */
 router.get(
-  '/images/:id',
+  '/images/:id', validateData(imageIdSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
 
       const response = await axios.get(
-        `${process.env.IMAGES_BASE_URL}asset/${id}`,
+        `${config.IMAGES_BASE_URL}asset/${id}`,
       );
 
       res.json({ success: true, data: response.data });

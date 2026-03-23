@@ -1,10 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import { AxiosError } from 'axios';
+import { config } from '../config/config';
 
 // ─── Types ────────────────────────────────────────────────
 interface AppError extends Error {
   statusCode?: number;
   code?: string;
+  type?: string;
+  details?: unknown;
 }
 
 // ─── NASA-specific error messages ─────────────────────────
@@ -38,7 +41,7 @@ export const errorHandler = (
   _next: NextFunction,
 ) => {
   // Log full error in development only
-  if (process.env.NODE_ENV !== 'production') {
+  if (config.NODE_ENV !== 'production') {
     console.error(`\n[ERROR] ${req.method} ${req.path}`);
     console.error(`Message : ${err.message}`);
     console.error(`Stack   : ${err.stack}\n`);
@@ -84,6 +87,20 @@ export const errorHandler = (
     }
   }
 
+  // ── Validation errors ─────────────────────────────────────
+  if ((err as AppError).type === 'VALIDATION_ERROR') {
+    const validationErr = err as AppError;
+    return res.status(validationErr.statusCode || 400).json({
+      success: false,
+      error: {
+        type: validationErr.type || 'VALIDATION_ERROR',
+        message: validationErr.message || 'Validation failed',
+        details: validationErr.details,
+        timestamp: new Date().toISOString(),
+      },
+    });
+  }
+
   // ── Generic application errors ────────────────────────
   const statusCode = (err as AppError).statusCode ?? 500;
 
@@ -93,7 +110,7 @@ export const errorHandler = (
       type: 'SERVER_ERROR',
       status: statusCode,
       message: err.message || 'An unexpected error occurred.',
-      ...(process.env.NODE_ENV !== 'production' && { stack: err.stack }),
+      ...(config.NODE_ENV !== 'production' && { stack: err.stack }),
       timestamp: new Date().toISOString(),
     },
   });

@@ -296,8 +296,8 @@ SOFTWARE.
 - [x] Add centralised error handling middleware
 - [x] Add request rate limiting to protect the NASA API key
 - [ ] Add response caching (e.g. node-cache) to reduce duplicate API calls
-- [ ] Add input validation and sanitisation
-- [ ] Set up environment variable validation on startup
+- [x] Add input validation and sanitisation
+- [x] Set up environment variable validation on startup
 - [x] Write Jest unit tests for routes and services
 - [x] Add logging middleware
 - [x] Add health check endpoint

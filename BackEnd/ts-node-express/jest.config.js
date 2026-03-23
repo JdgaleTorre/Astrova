@@ -27,25 +27,12 @@ module.exports = {
     '^.+\\.tsx?$': [
       'ts-jest',
       {
-        tsconfig: {
-          target: 'ES2020',
-          module: 'commonjs',
-          esModuleInterop: true,
-          skipLibCheck: true,
-          strict: true,
-          baseUrl: './',
-          paths: {
-            '*': ['node_modules/*'],
-          },
-        },
+        tsconfig: './tsconfig.test.json',
       },
     ],
   },
   moduleDirectories: ['node_modules', 'src'],
   rootDir: __dirname,
-  globals: {
-    'ts-jest': {
-      tsconfig: './tsconfig.test.json', // ← point to test config
-    },
-  },
+  detectOpenHandles: true,
+  forceExit: true,
 };
