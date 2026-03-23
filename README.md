@@ -64,15 +64,15 @@ Astrova/
 
 ## 🛠️ Tech Stack
 
-| Layer        | Technology                                      |
-|--------------|------------------------------------------------|
-| Frontend     | React 19, TanStack Router, TanStack Query       |
-| Backend      | Node.js, Express, Helmet, express-rate-limit    |
-| Database     | MongoDB                                         |
-| Styling      | Tailwind CSS                                    |
+| Layer          | Technology                                   |
+| -------------- | -------------------------------------------- |
+| Frontend       | React 19, TanStack Router, TanStack Query    |
+| Backend        | Node.js, Express, Helmet, express-rate-limit |
+| Database       | MongoDB                                      |
+| Styling        | Tailwind CSS                                 |
 | AI Integration | OpenAI API (optional)                        |
-| NASA APIs    | APOD, EPIC, NeoWs, Images                      |
-| Deployment   | Vercel (frontend), Render (backend), Docker    |
+| NASA APIs      | APOD, EPIC, NeoWs, Images                    |
+| Deployment     | Vercel (frontend), Render (backend), Docker  |
 
 ---
 
@@ -174,10 +174,10 @@ docker-compose down
 
 ### Services
 
-| Service   | Port  | Description                    |
-|-----------|-------|--------------------------------|
-| backend   | 3000  | Express API server             |
-| mongodb   | 27017 | MongoDB database               |
+| Service | Port  | Description        |
+| ------- | ----- | ------------------ |
+| backend | 3000  | Express API server |
+| mongodb | 27017 | MongoDB database   |
 
 ### Accessing the Application
 
@@ -189,6 +189,7 @@ docker-compose down
 ## 🌍 Deployment
 
 ### Live Demo
+
 - **Frontend:** https://astrova.josegale.com/
 - **Backend API:** https://astrova-xwmj.onrender.com/
 
@@ -224,18 +225,18 @@ This project includes a `render.yaml` file that configures the backend deploymen
 
 ## 📡 API Endpoints
 
-| Method | Endpoint                                     | Description                        |
-|--------|---------------------------------------------|------------------------------------|
-| GET    | `/api/health`                               | Backend health & MongoDB status    |
-| GET    | `/api/nasa/apod`                            | Astronomy Picture of the Day       |
-| GET    | `/api/nasa/apod?date=YYYY-MM-DD`           | APOD for a specific date           |
-| GET    | `/api/nasa/asteroids`                      | Near-Earth objects (today)         |
-| GET    | `/api/nasa/asteroids?start=YYYY-MM-DD&end=YYYY-MM-DD` | Asteroids by date range |
-| GET    | `/api/nasa/epic`                           | Latest EPIC Earth images           |
-| GET    | `/api/nasa/epic/dates`                     | Available EPIC dates               |
-| GET    | `/api/nasa/epic/:date`                     | EPIC images for specific date      |
-| GET    | `/api/nasa/images/search?q=query`           | Search NASA Image Library          |
-| GET    | `/api/nasa/images/:id`                      | Get image assets by ID             |
+| Method | Endpoint                                              | Description                     |
+| ------ | ----------------------------------------------------- | ------------------------------- |
+| GET    | `/api/health`                                         | Backend health & MongoDB status |
+| GET    | `/api/nasa/apod`                                      | Astronomy Picture of the Day    |
+| GET    | `/api/nasa/apod?date=YYYY-MM-DD`                      | APOD for a specific date        |
+| GET    | `/api/nasa/asteroids`                                 | Near-Earth objects (today)      |
+| GET    | `/api/nasa/asteroids?start=YYYY-MM-DD&end=YYYY-MM-DD` | Asteroids by date range         |
+| GET    | `/api/nasa/epic`                                      | Latest EPIC Earth images        |
+| GET    | `/api/nasa/epic/dates`                                | Available EPIC dates            |
+| GET    | `/api/nasa/epic/:date`                                | EPIC images for specific date   |
+| GET    | `/api/nasa/images/search?q=query`                     | Search NASA Image Library       |
+| GET    | `/api/nasa/images/:id`                                | Get image assets by ID          |
 
 ---
 
@@ -286,6 +287,7 @@ SOFTWARE.
 ## ✅ To Do
 
 ### 🔧 Backend
+
 - [x] Set up Express server with basic middleware (cors, dotenv)
 - [x] Set up Express server with helmet
 - [x] Create NASA API service layer (base URL, key injection)
@@ -303,6 +305,7 @@ SOFTWARE.
 - [x] Add health check endpoint
 
 ### 🎨 Frontend
+
 - [x] Scaffold React app with folder structure (pages, components, hooks, services)
 - [x] Set up TanStack Router with file-based routes
 - [ ] Build shared layout (navbar, sidebar, footer)
@@ -318,11 +321,13 @@ SOFTWARE.
 - [x] Write React Testing Library tests for key components
 
 ### 🤖 AI Features
+
 - [x] Set up OpenAI API integration in backend
 - [x] Add AI-generated description for APOD images
 - [x] Add AI explanation for asteroid risk and size data
 
 ### 📦 DevOps & Deployment
+
 - [x] Add `.env.example` files for both frontend and backend
 - [x] Add `.gitignore` to exclude `.env` files and `node_modules`
 - [x] Deploy backend to Render and verify all routes work
@@ -332,7 +337,8 @@ SOFTWARE.
 - [x] Add Docker Compose setup
 
 ### 🌟 Bonus / Nice to Have
-- [ ] Favourite / bookmark feature for APOD images (localStorage)
+
+- [x] Favourite / bookmark feature for APOD images (localStorage)
 - [ ] Share button to copy a link to a specific APOD date
 - [x] Animated star background on the home page
 - [ ] Dark/light mode toggle
