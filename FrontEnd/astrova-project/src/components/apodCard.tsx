@@ -97,7 +97,7 @@ export default function ApodCard(data: ApodResponse) {
             </div>
           </div>
         ) : (
-          <div className="bg-background aspect-video overflow-hidden rounded-2xl">
+          <div className="bg-background relative aspect-video overflow-hidden rounded-2xl">
             <video
               src={data?.url}
               title={data?.title}
@@ -107,6 +107,55 @@ export default function ApodCard(data: ApodResponse) {
               loop
               muted
             />
+            <div className="absolute top-6 right-6 opacity-0 transition-opacity group-hover:opacity-100">
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  className="bg-cyan/90 hover:bg-cyan text-background group/btn gap-0 shadow-lg backdrop-blur-sm"
+                  asChild
+                >
+                  <a
+                    href={data?.hdurl || data?.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="overflow-hidden"
+                  >
+                    <Download className="h-4 w-4" />
+                    <span className="ml-0 w-0 translate-x-110 transition-all duration-300 ease-in-out group-hover/btn:ml-2 group-hover/btn:w-auto group-hover/btn:translate-x-0">
+                      HD Image
+                    </span>
+                  </a>
+                </Button>
+                <Button
+                  size="sm"
+                  className="bg-cyan/90 hover:bg-cyan text-background group/btn gap-0 overflow-hidden shadow-lg backdrop-blur-sm"
+                  onClick={() => {
+                    const item = {
+                      id: data.date,
+                      type: 'apod' as const,
+                      date: data.date,
+                      title: data.title,
+                      thumbnail: data.url,
+                      url: data.url,
+                      hdUrl: data.hdurl,
+                      description: data.explanation,
+                      savedAt: new Date().toISOString(),
+                    };
+                    saveItem(item);
+                    setSaved(true);
+                  }}
+                >
+                  {saved ? (
+                    <BookmarkCheck className="h-4 w-4" />
+                  ) : (
+                    <Bookmark className="h-4 w-4" />
+                  )}
+                  <span className="ml-0 w-0 translate-x-110 transition-all duration-300 ease-in-out group-hover/btn:ml-2 group-hover/btn:w-auto group-hover/btn:translate-x-0">
+                    {saved ? 'Saved' : 'Save'}
+                  </span>
+                </Button>
+              </div>
+            </div>
           </div>
         )}
       </div>
