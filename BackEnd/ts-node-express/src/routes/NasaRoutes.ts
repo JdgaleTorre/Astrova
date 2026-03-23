@@ -1,6 +1,18 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import axios from 'axios';
 import { getAiResponse } from '../services/aiService';
+import { validateData } from '../middlewares/validate';
+import {
+  apodQuerySchema,
+  asteroidIdSchema,
+  asteroidsQuerySchema,
+  earthAssetsSchema,
+  earthImagerySchema,
+  epicDateSchema,
+  epicTypeSchema,
+  imageIdSchema,
+  imagesSearchSchema
+} from '../validators/nasa';
 
 const router = Router();
 
@@ -13,7 +25,7 @@ const router = Router();
  *   - end_date?: string (YYYY-MM-DD) — end of date range
  *   - count?: number — random images count
  */
-router.get('/apod', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/apod', validateData(apodQuerySchema), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { date, start_date, end_date, count } = req.query;
 
@@ -73,7 +85,7 @@ router.get('/apod', async (req: Request, res: Response, next: NextFunction) => {
  * Query params:
  *   - type?: string — 'natural' | 'enhanced' (default: natural)
  */
-router.get('/epic', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/epic', validateData(epicTypeSchema), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { type = 'natural' } = req.query;
 
@@ -95,8 +107,7 @@ router.get('/epic', async (req: Request, res: Response, next: NextFunction) => {
  *   - type?: string — 'natural' | 'enhanced' (default: natural)
  */
 router.get(
-  '/epic/dates',
-  async (req: Request, res: Response, next: NextFunction) => {
+  '/epic/dates', validateData(epicTypeSchema), async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { type = 'natural' } = req.query;
 
@@ -123,7 +134,7 @@ router.get(
  *   - type?: string — 'natural' | 'enhanced' (default: natural)
  */
 router.get(
-  '/epic/:date',
+  '/epic/:date', validateData(epicDateSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { date } = req.params;
@@ -193,7 +204,7 @@ const summariseNeoData = (data: any) => {
  *   - end_date?: string (YYYY-MM-DD) — max 7 days after start_date
  */
 router.get(
-  '/asteroids',
+  '/asteroids', validateData(asteroidsQuerySchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { start_date, end_date } = req.query;
@@ -244,7 +255,7 @@ router.get(
  *   - id: string — NASA NeoWs asteroid ID
  */
 router.get(
-  '/asteroids/:id',
+  '/asteroids/:id', validateData(asteroidIdSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
@@ -274,7 +285,7 @@ router.get(
  *   - date?: string (YYYY-MM-DD) — date of imagery (max 30 days ago)
  */
 router.get(
-  '/earth/imagery',
+  '/earth/imagery', validateData(earthImagerySchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { lon, lat, dim, date } = req.query;
@@ -313,7 +324,7 @@ router.get(
  *   - dim?: number — box size in degrees
  */
 router.get(
-  '/earth/assets',
+  '/earth/assets', validateData(earthAssetsSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { lon, lat, date, dim } = req.query;
@@ -351,7 +362,7 @@ router.get(
  *   - page?: number — page number
  */
 router.get(
-  '/images/search',
+  '/images/search', validateData(imagesSearchSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { q, media_type, page, nasa_id } = req.query;
@@ -387,7 +398,7 @@ router.get(
  *   - id: string — NASA image/video ID
  */
 router.get(
-  '/images/:id',
+  '/images/:id', validateData(imageIdSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;

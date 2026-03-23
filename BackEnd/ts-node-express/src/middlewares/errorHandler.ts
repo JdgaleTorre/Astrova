@@ -5,6 +5,8 @@ import { AxiosError } from 'axios';
 interface AppError extends Error {
   statusCode?: number;
   code?: string;
+  type?: string;
+  details?: unknown;
 }
 
 // ─── NASA-specific error messages ─────────────────────────
@@ -82,6 +84,20 @@ export const errorHandler = (
         },
       });
     }
+  }
+
+  // ── Validation errors ─────────────────────────────────────
+  if ((err as AppError).type === 'VALIDATION_ERROR') {
+    const validationErr = err as AppError;
+    return res.status(validationErr.statusCode || 400).json({
+      success: false,
+      error: {
+        type: validationErr.type || 'VALIDATION_ERROR',
+        message: validationErr.message || 'Validation failed',
+        details: validationErr.details,
+        timestamp: new Date().toISOString(),
+      },
+    });
   }
 
   // ── Generic application errors ────────────────────────
