@@ -1,47 +1,59 @@
-import { ChevronLeft, ChevronRight, Download, Globe, MapPin, Satellite } from 'lucide-react'
-import { Button } from './ui/button'
-import { Card, CardHeader, CardTitle } from './ui/card'
-import { ImageCarousel } from './ui/imageCarousel'
-import type { EpicImage, EpicType } from '../services/nasa'
-import { useState } from 'react'
+import {
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  Globe,
+  MapPin,
+  Satellite,
+} from 'lucide-react';
+import { Button } from './ui/button';
+import { Card, CardHeader, CardTitle } from './ui/card';
+import { ImageCarousel } from './ui/imageCarousel';
+import type { EpicImage, EpicType } from '../services/nasa';
+import { useState } from 'react';
 
 interface EpicCarouselProps {
-  images: EpicImage[]
-  dateStr: string
-  type: EpicType
+  images: EpicImage[];
+  dateStr: string;
+  type: EpicType;
 }
 
 export function EpicCarousel({ images, dateStr, type }: EpicCarouselProps) {
   const [selectedIndex, onSelect] = useState(0); // ← starts at 0 on every mount
 
-  if (!images || !images[selectedIndex]) return null
+  if (!images || !images[selectedIndex]) return null;
 
-  const currentImage = images[selectedIndex]
-  const mainImageUrl = `https://epic.gsfc.nasa.gov/archive/${type}/${dateStr}/png/${currentImage.image}.png`
-  const thumbnailUrls = images.map(img =>
-    `https://epic.gsfc.nasa.gov/archive/${type}/${dateStr}/thumbs/${img.image}.jpg`
-  )
+  const currentImage = images[selectedIndex];
+  const mainImageUrl = `https://epic.gsfc.nasa.gov/archive/${type}/${dateStr}/png/${currentImage.image}.png`;
+  const thumbnailUrls = images.map(
+    (img) =>
+      `https://epic.gsfc.nasa.gov/archive/${type}/${dateStr}/thumbs/${img.image}.jpg`,
+  );
 
   return (
     <div>
-      <div className="relative overflow-hidden rounded-2xl group">
-        <Card className="overflow-hidden border-space-cyan/20 hover:shadow-2xl hover:shadow-space-cyan/20 transition-all">
-          <div className="grid lg:grid-cols-3 gap-6">
-            <div className="relative group lg:col-span-2">
+      <div className="group relative overflow-hidden rounded-2xl">
+        <Card className="border-space-cyan/20 hover:shadow-space-cyan/20 overflow-hidden transition-all hover:shadow-2xl">
+          <div className="grid gap-6 lg:grid-cols-3">
+            <div className="group relative lg:col-span-2">
               <img
                 src={mainImageUrl}
                 alt={currentImage.caption}
-                className="w-full h-full object-cover min-h-100"
+                className="h-full min-h-100 w-full object-cover"
               />
-              <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+              <div className="absolute top-6 right-6 opacity-0 transition-opacity group-hover:opacity-100">
                 <Button
                   size="sm"
-                  className="bg-cyan/90 hover:bg-cyan text-background backdrop-blur-sm shadow-lg"
+                  className="bg-cyan/90 hover:bg-cyan text-background shadow-lg backdrop-blur-sm"
                   asChild
                 >
-                  <a href={mainImageUrl} target="_blank" rel="noopener noreferrer">
-                    <Download className="h-4 w-4 mr-2" />
+                  <a
+                    href={mainImageUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Download className="mr-2 h-4 w-4" />
                     HD Image
                   </a>
                 </Button>
@@ -50,20 +62,22 @@ export function EpicCarousel({ images, dateStr, type }: EpicCarouselProps) {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="bg-background/50 hover:bg-background/70 backdrop-blur-sm border-white/20"
+                  className="bg-background/50 hover:bg-background/70 border-white/20 backdrop-blur-sm"
                   onClick={() => onSelect(Math.max(0, selectedIndex - 1))}
                   disabled={selectedIndex === 0}
                 >
                   <ChevronLeft className="h-5 w-5" />
                 </Button>
-                <span className="bg-background/50 backdrop-blur-sm px-3 py-1 rounded-full text-sm text-soft-white border border-white/20">
+                <span className="bg-background/50 text-soft-white rounded-full border border-white/20 px-3 py-1 text-sm backdrop-blur-sm">
                   Image {selectedIndex + 1} of {images.length}
                 </span>
                 <Button
                   variant="outline"
                   size="icon"
-                  className="bg-background/50 hover:bg-background/70 backdrop-blur-sm border-white/20"
-                  onClick={() => onSelect(Math.min(images.length - 1, selectedIndex + 1))}
+                  className="bg-background/50 hover:bg-background/70 border-white/20 backdrop-blur-sm"
+                  onClick={() =>
+                    onSelect(Math.min(images.length - 1, selectedIndex + 1))
+                  }
                   disabled={selectedIndex === images.length - 1}
                 >
                   <ChevronRight className="h-5 w-5" />
@@ -72,19 +86,21 @@ export function EpicCarousel({ images, dateStr, type }: EpicCarouselProps) {
             </div>
 
             <CardHeader>
-              <div className="flex items-center gap-2 mb-2">
-                <Satellite className="h-4 w-4 text-space-cyan" />
-                <span className="text-sm font-medium text-space-cyan">
+              <div className="mb-2 flex items-center gap-2">
+                <Satellite className="text-space-cyan h-4 w-4" />
+                <span className="text-space-cyan text-sm font-medium">
                   {new Date(currentImage.date).toLocaleString()}
                 </span>
               </div>
-              <CardTitle className="text-2xl mb-3">{currentImage.caption}</CardTitle>
+              <CardTitle className="mb-3 text-2xl">
+                {currentImage.caption}
+              </CardTitle>
               <div className="mt-6 space-y-4">
                 <div className="flex items-start gap-3">
-                  <MapPin className="h-5 w-5 text-primary mt-0.5" />
+                  <MapPin className="text-primary mt-0.5 h-5 w-5" />
                   <div>
                     <p className="text-sm font-medium">Centroid Coordinates</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       Lat: {currentImage.centroid_coordinates.lat.toFixed(2)}° •
                       Lon: {currentImage.centroid_coordinates.lon.toFixed(2)}°
                     </p>
@@ -92,20 +108,35 @@ export function EpicCarousel({ images, dateStr, type }: EpicCarouselProps) {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <Globe className="h-5 w-5 text-space-cyan mt-0.5" />
+                  <Globe className="text-space-cyan mt-0.5 h-5 w-5" />
                   <div>
                     <p className="text-sm font-medium">DSCOVR Position</p>
-                    <p className="text-sm text-muted-foreground font-mono">
-                      X: {(currentImage.dscovr_j2000_position.x / 1000000).toFixed(2)}M km<br />
-                      Y: {(currentImage.dscovr_j2000_position.y / 1000000).toFixed(2)}M km<br />
-                      Z: {(currentImage.dscovr_j2000_position.z / 1000000).toFixed(2)}M km
+                    <p className="text-muted-foreground font-mono text-sm">
+                      X:{' '}
+                      {(currentImage.dscovr_j2000_position.x / 1000000).toFixed(
+                        2,
+                      )}
+                      M km
+                      <br />
+                      Y:{' '}
+                      {(currentImage.dscovr_j2000_position.y / 1000000).toFixed(
+                        2,
+                      )}
+                      M km
+                      <br />
+                      Z:{' '}
+                      {(currentImage.dscovr_j2000_position.z / 1000000).toFixed(
+                        2,
+                      )}
+                      M km
                     </p>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t pb-4">
-                  <p className="text-xs text-muted-foreground">
-                    Version: {currentImage.version} • Identifier: {currentImage.identifier}
+                <div className="border-t pt-4 pb-4">
+                  <p className="text-muted-foreground text-xs">
+                    Version: {currentImage.version} • Identifier:{' '}
+                    {currentImage.identifier}
                   </p>
                 </div>
               </div>
@@ -119,5 +150,5 @@ export function EpicCarousel({ images, dateStr, type }: EpicCarouselProps) {
         onSelect={onSelect}
       />
     </div>
-  )
+  );
 }

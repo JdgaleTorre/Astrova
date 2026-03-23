@@ -2,7 +2,7 @@
 
 :root {
   --font-size: 16px;
-  
+
   /* Astrova Dark Theme - Deep Space */
   --background: #04050f;
   --surface: #080c1a;
@@ -11,7 +11,7 @@
   --card-foreground: #f0f4ff;
   --popover: #0d111f;
   --popover-foreground: #f0f4ff;
-  
+
   /* Brand Colors */
   --primary: #00d4ff; /* Electric Cyan */
   --primary-foreground: #04050f;
@@ -19,37 +19,37 @@
   --secondary-foreground: #f0f4ff;
   --accent: #00d4ff;
   --accent-foreground: #f0f4ff;
-  
+
   /* Semantic Colors */
   --muted: #1a1f35;
   --muted-foreground: #8b92b0;
   --destructive: #ef4444; /* Mars Red */
   --destructive-foreground: #f0f4ff;
-  
+
   /* Utility */
   --border: rgba(0, 212, 255, 0.1);
   --input: rgba(0, 212, 255, 0.1);
   --input-background: #0d111f;
   --ring: #00d4ff;
   --switch-background: #1a1f35;
-  
+
   /* Additional Brand Colors */
   --cyan: #00d4ff;
   --amber: #f59e0b; /* Solar Gold */
   --mars-red: #ef4444;
   --soft-white: #f0f4ff;
-  
+
   /* Chart Colors */
   --chart-1: #00d4ff;
   --chart-2: #f59e0b;
   --chart-3: #ef4444;
   --chart-4: #8b5cf6;
   --chart-5: #10b981;
-  
+
   --font-weight-medium: 500;
   --font-weight-normal: 400;
   --radius: 1rem;
-  
+
   /* Sidebar */
   --sidebar: #080c1a;
   --sidebar-foreground: #f0f4ff;
@@ -115,24 +115,24 @@
   --color-input-background: var(--input-background);
   --color-switch-background: var(--switch-background);
   --color-ring: var(--ring);
-  
+
   /* Brand Colors */
   --color-cyan: var(--cyan);
   --color-amber: var(--amber);
   --color-mars-red: var(--mars-red);
   --color-soft-white: var(--soft-white);
-  
+
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  
+
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
