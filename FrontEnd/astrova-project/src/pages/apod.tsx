@@ -57,7 +57,11 @@ export function ApodPage() {
           {error ? (
             <ErrorDisplay error={error} />
           ) : (
-            apodData?.map((data) => <ApodCard {...data} />)
+            apodData?.map((data) => (
+              <div key={data.title}>
+                <ApodCard {...data} />
+              </div>
+            ))
           )}
         </div>
       </div>
