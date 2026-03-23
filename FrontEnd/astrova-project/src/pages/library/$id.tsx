@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { getMediaUrl } from '../../utils/metadata';
+import usePreviousLocation from '../../hooks/usePreviousLocation';
 
 export const Route = createFileRoute('/library/$id')({
   component: LibraryDetailPage,
@@ -29,6 +30,7 @@ export const Route = createFileRoute('/library/$id')({
 
 function LibraryDetailPage() {
   const { id } = useParams({ from: '/library/$id' });
+  const previousLocation = usePreviousLocation();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['library-item', id],
@@ -55,7 +57,7 @@ function LibraryDetailPage() {
               Item not found
             </h1>
             <Button asChild>
-              <Link to="/library">
+              <Link to={previousLocation}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Library
               </Link>
@@ -75,7 +77,7 @@ function LibraryDetailPage() {
     <div className="relative flex min-h-screen flex-col pt-16">
       <div className="container mx-auto max-w-7xl px-4 py-8 md:pt-24">
         <Link
-          to="/library"
+          to={previousLocation}
           className="text-muted-foreground hover:text-cyan mb-6 inline-flex items-center gap-2 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
