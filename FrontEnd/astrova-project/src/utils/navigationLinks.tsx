@@ -7,7 +7,7 @@ export const NAVIGATION_LINKS = [
   { path: '/saved', label: 'Saved' },
 ];
 
-import { Calendar, Orbit, Globe, BookImage, Bookmark } from 'lucide-react';
+import { Calendar, Orbit, Globe, BookImage } from 'lucide-react';
 
 export const FEATURED_LINKS = [
   {
@@ -38,11 +38,11 @@ export const FEATURED_LINKS = [
     icon: <BookImage className="text-cyan h-6 w-6" />,
     color: 'cyan',
   },
-  {
-    path: '/saved',
-    label: 'Saved Items',
-    description: 'Your bookmarked NASA images and videos',
-    icon: <Bookmark className="text-cyan h-6 w-6" />,
-    color: 'cyan',
-  },
+  // {
+  //   path: '/saved',
+  //   label: 'Saved Items',
+  //   description: 'Your bookmarked NASA images and videos',
+  //   icon: <Bookmark className="text-cyan h-6 w-6" />,
+  //   color: 'cyan',
+  // },
 ];
