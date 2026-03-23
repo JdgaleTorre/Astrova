@@ -5,20 +5,14 @@ import HeaderComponent from './headerComponent';
 describe('HeaderComponent', () => {
   it('renders heading element', () => {
     render(
-      <HeaderComponent
-        title="Test Title"
-        description="Test Description"
-      />
+      <HeaderComponent title="Test Title" description="Test Description" />,
     );
     expect(screen.getByRole('heading')).toBeInTheDocument();
   });
 
   it('renders description', () => {
     render(
-      <HeaderComponent
-        title="Test Title"
-        description="Test Description"
-      />
+      <HeaderComponent title="Test Title" description="Test Description" />,
     );
     expect(screen.getByText('Test Description')).toBeInTheDocument();
   });
@@ -29,7 +23,7 @@ describe('HeaderComponent', () => {
         title="Test Title"
         description="Test Description"
         showCalendarFilter={false}
-      />
+      />,
     );
     expect(screen.getByRole('heading')).toBeInTheDocument();
   });
@@ -40,7 +34,7 @@ describe('HeaderComponent', () => {
         title="Test Title"
         description="Test Description"
         showCalendarFilter={true}
-      />
+      />,
     );
     expect(screen.getByRole('button')).toBeInTheDocument();
   });
@@ -53,7 +47,7 @@ describe('HeaderComponent', () => {
         showCalendarFilter={true}
         calendarMode="single"
         selectedDate={new Date('2024-01-15')}
-      />
+      />,
     );
     expect(screen.getByText(/January 15th, 2024/)).toBeInTheDocument();
   });
@@ -69,7 +63,7 @@ describe('HeaderComponent', () => {
           from: new Date('2024-01-15'),
           to: new Date('2024-01-20'),
         }}
-      />
+      />,
     );
     expect(screen.getByText(/January 15th, 2024/)).toBeInTheDocument();
     expect(screen.getByText(/January 20th, 2024/)).toBeInTheDocument();
@@ -81,7 +75,7 @@ describe('HeaderComponent', () => {
         title="Test Title"
         description="Test Description"
         showCalendarFilter={true}
-      />
+      />,
     );
     expect(screen.getByRole('heading')).toBeInTheDocument();
   });
@@ -92,7 +86,7 @@ describe('HeaderComponent', () => {
         title="Test"
         description="Desc"
         showCalendarFilter={false}
-      />
+      />,
     );
     expect(container.firstChild).toBeInTheDocument();
   });

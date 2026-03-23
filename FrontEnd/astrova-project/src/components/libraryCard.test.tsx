@@ -19,7 +19,9 @@ const mockMediaAsset: MediaAsset = {
     },
   ],
   href: 'https://example.com/image.jpg',
-  links: [{ href: 'https://example.com/image.jpg', rel: 'preview', render: 'image' }],
+  links: [
+    { href: 'https://example.com/image.jpg', rel: 'preview', render: 'image' },
+  ],
 };
 
 const mockVideoAsset: MediaAsset = {

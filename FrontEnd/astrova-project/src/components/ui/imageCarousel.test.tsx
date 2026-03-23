@@ -16,7 +16,7 @@ describe('ImageCarousel', () => {
         imageUrls={['https://example.com/image1.jpg']}
         selectedIndex={0}
         onSelect={jest.fn()}
-      />
+      />,
     );
     expect(container.querySelector('.scrollbar-thin')).toBeNull();
   });
@@ -27,7 +27,7 @@ describe('ImageCarousel', () => {
         imageUrls={imageUrls}
         selectedIndex={0}
         onSelect={jest.fn()}
-      />
+      />,
     );
     expect(container.querySelector('.scrollbar-thin')).toBeInTheDocument();
   });
@@ -38,7 +38,7 @@ describe('ImageCarousel', () => {
         imageUrls={imageUrls}
         selectedIndex={0}
         onSelect={jest.fn()}
-      />
+      />,
     );
     const buttons = screen.getAllByRole('button');
     expect(buttons).toHaveLength(3);
@@ -50,7 +50,7 @@ describe('ImageCarousel', () => {
         imageUrls={imageUrls}
         selectedIndex={1}
         onSelect={jest.fn()}
-      />
+      />,
     );
     const buttons = screen.getAllByRole('button');
     expect(buttons[1]).toHaveClass('ring-2');
@@ -62,7 +62,7 @@ describe('ImageCarousel', () => {
         imageUrls={imageUrls}
         selectedIndex={0}
         onSelect={jest.fn()}
-      />
+      />,
     );
     const buttons = screen.getAllByRole('button');
     expect(buttons[1]).toHaveClass('opacity-60');
@@ -75,7 +75,7 @@ describe('ImageCarousel', () => {
         imageUrls={imageUrls}
         selectedIndex={0}
         onSelect={onSelect}
-      />
+      />,
     );
     const buttons = screen.getAllByRole('button');
     await userEvent.click(buttons[2]);
@@ -88,7 +88,7 @@ describe('ImageCarousel', () => {
         imageUrls={imageUrls}
         selectedIndex={0}
         onSelect={jest.fn()}
-      />
+      />,
     );
     expect(screen.getByText('All images from this date:')).toBeInTheDocument();
   });
@@ -99,7 +99,7 @@ describe('ImageCarousel', () => {
         imageUrls={imageUrls}
         selectedIndex={0}
         onSelect={jest.fn()}
-      />
+      />,
     );
     const images = document.querySelectorAll('img');
     images.forEach((img, index) => {

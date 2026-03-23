@@ -28,14 +28,14 @@ describe('AcronymTitle', () => {
     const { container } = render(<AcronymTitle text="ApodNASA" />);
     const spans = container.querySelectorAll('span');
     // A is uppercase, so it's treated as an acronym letter (text-primary)
-    expect(spans[0]).toHaveClass('text-primary');  // A (uppercase)
+    expect(spans[0]).toHaveClass('text-primary'); // A (uppercase)
     expect(spans[1]).toHaveClass('text-soft-white'); // p (lowercase)
     expect(spans[2]).toHaveClass('text-soft-white'); // o (lowercase)
     expect(spans[3]).toHaveClass('text-soft-white'); // d (lowercase)
-    expect(spans[4]).toHaveClass('text-primary');    // N (uppercase)
-    expect(spans[5]).toHaveClass('text-primary');    // A (uppercase)
-    expect(spans[6]).toHaveClass('text-primary');    // S (uppercase)
-    expect(spans[7]).toHaveClass('text-primary');    // A (uppercase)
+    expect(spans[4]).toHaveClass('text-primary'); // N (uppercase)
+    expect(spans[5]).toHaveClass('text-primary'); // A (uppercase)
+    expect(spans[6]).toHaveClass('text-primary'); // S (uppercase)
+    expect(spans[7]).toHaveClass('text-primary'); // A (uppercase)
   });
 
   it('handles empty string', () => {

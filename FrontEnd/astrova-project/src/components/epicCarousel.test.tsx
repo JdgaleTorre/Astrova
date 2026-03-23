@@ -25,21 +25,21 @@ const mockImages: EpicImage[] = [
 describe('EpicCarousel', () => {
   it('renders main image caption', () => {
     render(
-      <EpicCarousel images={mockImages} dateStr="20240115" type="natural" />
+      <EpicCarousel images={mockImages} dateStr="20240115" type="natural" />,
     );
     expect(screen.getByText('Test EPIC Caption')).toBeInTheDocument();
   });
 
   it('displays image counter', () => {
     render(
-      <EpicCarousel images={mockImages} dateStr="20240115" type="natural" />
+      <EpicCarousel images={mockImages} dateStr="20240115" type="natural" />,
     );
     expect(screen.getByText('Image 1 of 3')).toBeInTheDocument();
   });
 
   it('renders navigation buttons', () => {
     render(
-      <EpicCarousel images={mockImages} dateStr="20240115" type="natural" />
+      <EpicCarousel images={mockImages} dateStr="20240115" type="natural" />,
     );
     const buttons = screen.getAllByRole('button');
     expect(buttons.length).toBeGreaterThanOrEqual(2);
@@ -47,7 +47,7 @@ describe('EpicCarousel', () => {
 
   it('has navigation buttons that can be interacted with', () => {
     render(
-      <EpicCarousel images={mockImages} dateStr="20240115" type="natural" />
+      <EpicCarousel images={mockImages} dateStr="20240115" type="natural" />,
     );
     const buttons = screen.getAllByRole('button');
     expect(buttons[0]).toBeInTheDocument();
@@ -56,7 +56,7 @@ describe('EpicCarousel', () => {
 
   it('displays centroid coordinates', () => {
     render(
-      <EpicCarousel images={mockImages} dateStr="20240115" type="natural" />
+      <EpicCarousel images={mockImages} dateStr="20240115" type="natural" />,
     );
     expect(screen.getByText(/Centroid Coordinates/)).toBeInTheDocument();
     expect(screen.getByText(/Lat: 45.50/)).toBeInTheDocument();
@@ -64,14 +64,14 @@ describe('EpicCarousel', () => {
 
   it('displays DSCOVR position', () => {
     render(
-      <EpicCarousel images={mockImages} dateStr="20240115" type="natural" />
+      <EpicCarousel images={mockImages} dateStr="20240115" type="natural" />,
     );
     expect(screen.getByText(/DSCOVR Position/)).toBeInTheDocument();
   });
 
   it('renders download button', () => {
     render(
-      <EpicCarousel images={mockImages} dateStr="20240115" type="natural" />
+      <EpicCarousel images={mockImages} dateStr="20240115" type="natural" />,
     );
     const downloadLink = screen.getByRole('link', { name: /HD Image/i });
     expect(downloadLink).toHaveAttribute('target', '_blank');
@@ -79,7 +79,7 @@ describe('EpicCarousel', () => {
 
   it('returns null when images array is empty', () => {
     const { container } = render(
-      <EpicCarousel images={[]} dateStr="20240115" type="natural" />
+      <EpicCarousel images={[]} dateStr="20240115" type="natural" />,
     );
     expect(container.firstChild).toBeNull();
   });

@@ -63,7 +63,10 @@ describe('AsteroidCard', () => {
   it('renders JPL link', () => {
     render(<AsteroidCard asteroid={mockAsteroid} />);
     const link = screen.getByRole('link', { name: /NASA JPL/i });
-    expect(link).toHaveAttribute('href', 'https://ssd.jpl.nasa.gov/sbdb.cgi?sstr=12345');
+    expect(link).toHaveAttribute(
+      'href',
+      'https://ssd.jpl.nasa.gov/sbdb.cgi?sstr=12345',
+    );
   });
 
   it('displays size information', () => {

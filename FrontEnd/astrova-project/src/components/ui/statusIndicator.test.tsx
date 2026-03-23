@@ -49,15 +49,25 @@ describe('StatusIndicator', () => {
   });
 
   it('applies shadow class based on status', () => {
-    const { container: onlineContainer } = render(<StatusIndicator status="online" />);
-    expect(onlineContainer.querySelector('#indicator')).toHaveClass('shadow-green-500/50');
+    const { container: onlineContainer } = render(
+      <StatusIndicator status="online" />,
+    );
+    expect(onlineContainer.querySelector('#indicator')).toHaveClass(
+      'shadow-green-500/50',
+    );
 
-    const { container: offlineContainer } = render(<StatusIndicator status="offline" />);
-    expect(offlineContainer.querySelector('#indicator')).toHaveClass('shadow-red-500/50');
+    const { container: offlineContainer } = render(
+      <StatusIndicator status="offline" />,
+    );
+    expect(offlineContainer.querySelector('#indicator')).toHaveClass(
+      'shadow-red-500/50',
+    );
   });
 
   it('applies custom className', () => {
-    const { container } = render(<StatusIndicator status="online" className="custom-class" />);
+    const { container } = render(
+      <StatusIndicator status="online" className="custom-class" />,
+    );
     expect(container.firstChild).toHaveClass('custom-class');
   });
 

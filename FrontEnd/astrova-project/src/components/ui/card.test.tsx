@@ -35,7 +35,9 @@ describe('CardHeader', () => {
   });
 
   it('CardHeader forwards className', () => {
-    const { container } = render(<CardHeader className="custom-class">Header</CardHeader>);
+    const { container } = render(
+      <CardHeader className="custom-class">Header</CardHeader>,
+    );
     expect(container.firstChild).toHaveClass('custom-class');
   });
 });
@@ -52,24 +54,35 @@ describe('CardTitle', () => {
   });
 
   it('CardTitle forwards className', () => {
-    const { container } = render(<CardTitle className="custom-class">Title</CardTitle>);
+    const { container } = render(
+      <CardTitle className="custom-class">Title</CardTitle>,
+    );
     expect(container.firstChild).toHaveClass('custom-class');
   });
 });
 
 describe('CardDescription', () => {
   it('renders CardDescription with correct data-slot', () => {
-    const { container } = render(<CardDescription>Description</CardDescription>);
-    expect(container.firstChild).toHaveAttribute('data-slot', 'card-description');
+    const { container } = render(
+      <CardDescription>Description</CardDescription>,
+    );
+    expect(container.firstChild).toHaveAttribute(
+      'data-slot',
+      'card-description',
+    );
   });
 
   it('CardDescription renders as p', () => {
-    const { container } = render(<CardDescription>Description</CardDescription>);
+    const { container } = render(
+      <CardDescription>Description</CardDescription>,
+    );
     expect(container.querySelector('p')).toBeInTheDocument();
   });
 
   it('CardDescription has muted-foreground class', () => {
-    const { container } = render(<CardDescription>Description</CardDescription>);
+    const { container } = render(
+      <CardDescription>Description</CardDescription>,
+    );
     expect(container.firstChild).toHaveClass('text-muted-foreground');
   });
 });
@@ -81,7 +94,9 @@ describe('CardAction', () => {
   });
 
   it('CardAction forwards className', () => {
-    const { container } = render(<CardAction className="custom-class">Action</CardAction>);
+    const { container } = render(
+      <CardAction className="custom-class">Action</CardAction>,
+    );
     expect(container.firstChild).toHaveClass('custom-class');
   });
 });
@@ -93,7 +108,9 @@ describe('CardContent', () => {
   });
 
   it('CardContent forwards className', () => {
-    const { container } = render(<CardContent className="custom-class">Content</CardContent>);
+    const { container } = render(
+      <CardContent className="custom-class">Content</CardContent>,
+    );
     expect(container.firstChild).toHaveClass('custom-class');
   });
 });
@@ -105,7 +122,9 @@ describe('CardFooter', () => {
   });
 
   it('CardFooter forwards className', () => {
-    const { container } = render(<CardFooter className="custom-class">Footer</CardFooter>);
+    const { container } = render(
+      <CardFooter className="custom-class">Footer</CardFooter>,
+    );
     expect(container.firstChild).toHaveClass('custom-class');
   });
 });

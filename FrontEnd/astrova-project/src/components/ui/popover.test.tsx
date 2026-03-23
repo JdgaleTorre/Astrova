@@ -1,6 +1,11 @@
 import { render } from '@testing-library/react';
 import { describe, it, expect } from '@jest/globals';
-import { Popover, PopoverTrigger, PopoverContent, PopoverAnchor } from './popover';
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverAnchor,
+} from './popover';
 
 describe('Popover', () => {
   it('renders without crashing', () => {
@@ -8,7 +13,7 @@ describe('Popover', () => {
       render(
         <Popover>
           <PopoverTrigger>Open</PopoverTrigger>
-        </Popover>
+        </Popover>,
       );
     }).not.toThrow();
   });
@@ -19,16 +24,18 @@ describe('PopoverTrigger', () => {
     const { container } = render(
       <Popover>
         <PopoverTrigger>Open</PopoverTrigger>
-      </Popover>
+      </Popover>,
     );
-    expect(container.querySelector('[data-slot="popover-trigger"]')).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-slot="popover-trigger"]'),
+    ).toBeInTheDocument();
   });
 
   it('renders as a button', () => {
     const { container } = render(
       <Popover>
         <PopoverTrigger>Open</PopoverTrigger>
-      </Popover>
+      </Popover>,
     );
     expect(container.querySelector('button')).toBeInTheDocument();
   });
@@ -37,7 +44,7 @@ describe('PopoverTrigger', () => {
     const { container } = render(
       <Popover>
         <PopoverTrigger>Open Popover</PopoverTrigger>
-      </Popover>
+      </Popover>,
     );
     expect(container.textContent).toBe('Open Popover');
   });
@@ -50,7 +57,7 @@ describe('PopoverContent', () => {
       render(
         <Popover open>
           <PopoverContent>Content</PopoverContent>
-        </Popover>
+        </Popover>,
       );
     }).not.toThrow();
   });
@@ -61,8 +68,10 @@ describe('PopoverAnchor', () => {
     const { container } = render(
       <Popover>
         <PopoverAnchor>Anchor</PopoverAnchor>
-      </Popover>
+      </Popover>,
     );
-    expect(container.querySelector('[data-slot="popover-anchor"]')).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-slot="popover-anchor"]'),
+    ).toBeInTheDocument();
   });
 });

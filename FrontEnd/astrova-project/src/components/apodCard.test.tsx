@@ -37,7 +37,9 @@ describe('ApodCard', () => {
 
   it('renders description for image APOD', () => {
     render(<ApodCard {...mockImageApod} />);
-    expect(screen.getByText('This is a test image explanation.')).toBeInTheDocument();
+    expect(
+      screen.getByText('This is a test image explanation.'),
+    ).toBeInTheDocument();
   });
 
   it('renders copyright for image APOD', () => {
@@ -54,13 +56,18 @@ describe('ApodCard', () => {
 
   it('renders description for video APOD', () => {
     render(<ApodCard {...mockVideoApod} />);
-    expect(screen.getByText('This is a test video explanation.')).toBeInTheDocument();
+    expect(
+      screen.getByText('This is a test video explanation.'),
+    ).toBeInTheDocument();
   });
 
   it('renders download button', () => {
     render(<ApodCard {...mockImageApod} />);
     const downloadLink = screen.getByRole('link', { name: /HD Image/i });
-    expect(downloadLink).toHaveAttribute('href', 'https://example.com/image-hd.jpg');
+    expect(downloadLink).toHaveAttribute(
+      'href',
+      'https://example.com/image-hd.jpg',
+    );
   });
 
   it('renders AI insight card', () => {

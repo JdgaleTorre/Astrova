@@ -21,7 +21,10 @@ describe('Input', () => {
 
   it('renders with custom type password', () => {
     const { container } = render(<Input type="password" />);
-    expect(container.querySelector('input')).toHaveAttribute('type', 'password');
+    expect(container.querySelector('input')).toHaveAttribute(
+      'type',
+      'password',
+    );
   });
 
   it('handles placeholder', () => {
