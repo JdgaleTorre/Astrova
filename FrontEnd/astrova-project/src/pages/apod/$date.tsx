@@ -33,6 +33,7 @@ export function ApodDatePage() {
       <HeaderComponent
         title="Astronomy Picture Of the Day"
         description={`Discover the cosmos - ${date}`}
+        showCalendarFilter={false}
       />
       <div className="container mx-auto max-w-7xl justify-center px-4 py-12 md:pt-48">
         <div className="mx-auto grid max-w-6xl gap-8">

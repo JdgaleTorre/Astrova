@@ -1,15 +1,15 @@
 // src/routes/apod.tsx
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
-import { getApod, type ApodParams } from '../services/nasa';
+import { getApod, type ApodParams } from '../../services/nasa';
 import { useState } from 'react';
 import type { DateRange } from 'react-day-picker';
-import HeaderComponent from '../components/headerComponent';
-import { Loading } from '../components/ui/loading';
-import { ErrorDisplay } from '../components/ui/error';
-import ApodCard from '../components/apodCard';
+import HeaderComponent from '../../components/headerComponent';
+import { Loading } from '../../components/ui/loading';
+import { ErrorDisplay } from '../../components/ui/error';
+import ApodCard from '../../components/apodCard';
 
-export const Route = createFileRoute('/apod')({
+export const Route = createFileRoute('/apod/')({
   component: ApodPage,
 });
 
