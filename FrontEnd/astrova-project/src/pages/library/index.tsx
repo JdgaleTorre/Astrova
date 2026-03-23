@@ -161,7 +161,7 @@ function RouteComponent() {
                                         <Card className="bg-card/50 backdrop-blur-sm border-white/5 overflow-hidden group hover:border-cyan/30 transition-all h-full">
                                             <div className="relative aspect-square overflow-hidden bg-surface">
                                                 {mediaType === 'audio' ? (
-                                                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-cyan/20 to-purple-500/20">
+                                                    <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-cyan/20 to-purple-500/20">
                                                         <Volume2 className="h-16 w-16 text-cyan/50" />
                                                     </div>
                                                 ) : (
