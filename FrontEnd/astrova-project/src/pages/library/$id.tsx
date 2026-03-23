@@ -5,7 +5,7 @@ import { Loading } from '../../components/ui/loading'
 import { ErrorDisplay } from '../../components/ui/error'
 import { useQuery } from '@tanstack/react-query'
 import { getImageById } from '../../services/nasa'
-import { ArrowLeft, Calendar, Camera, Download, ExternalLink, Image, Video } from 'lucide-react'
+import { ArrowLeft, Calendar, Camera, Download, ExternalLink, Image, Video, Volume2 } from 'lucide-react'
 import { format } from 'date-fns'
 import { getMediaUrl } from '../../utils/metadata'
 
@@ -45,11 +45,9 @@ function LibraryDetailPage() {
     }
 
     const { metadata, assets } = data;
-    const item = metadata.data[0];        // title, description etc
-    // const links = metadata.links;          // thumbnail from search result
+    const item = metadata.data[0];
     const mediaType = item.media_type;
     const mediaUrl = getMediaUrl(assets, mediaType);
-    // const thumbUrl = getThumbnailUrl(assets);
 
     return (
         <div className="min-h-screen flex flex-col pt-16 relative">
@@ -62,7 +60,7 @@ function LibraryDetailPage() {
                     <span>Back to Library</span>
                 </Link>
 
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center">
                     <div className="lg:col-span-3">
                         <div className="relative rounded-2xl overflow-hidden bg-surface">
                             {mediaType === 'image' ? (
@@ -79,7 +77,7 @@ function LibraryDetailPage() {
                                     controls
                                 />
                             ) : (
-                                <div className="aspect-square bg-surface flex items-center justify-center">
+                                <div className="min-h-96 bg-surface flex items-center justify-center">
                                     <audio
                                         src={mediaUrl}
                                         controls
@@ -99,7 +97,7 @@ function LibraryDetailPage() {
                             </CardHeader>
 
                             <CardContent className="p-6 pt-0 space-y-6">
-                                <p className="text-muted-foreground text-sm leading-relaxed">
+                                <p className="text-muted-foreground text-sm leading-relaxed max-h-80 overflow-auto">
                                     {item.description || 'No description available.'}
                                 </p>
 
@@ -125,6 +123,8 @@ function LibraryDetailPage() {
                                     <div className="flex items-center gap-3 text-sm">
                                         {mediaType === 'video' ? (
                                             <Video className="h-4 w-4 text-cyan" />
+                                        ) : mediaType === 'audio' ? (
+                                            <Volume2 className="h-4 w-4 text-cyan" />
                                         ) : (
                                             <Image className="h-4 w-4 text-cyan" />
                                         )}

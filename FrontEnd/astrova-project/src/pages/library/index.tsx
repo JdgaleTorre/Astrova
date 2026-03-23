@@ -8,7 +8,7 @@ import { ErrorDisplay } from '../../components/ui/error'
 import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { searchImages, type ImageSearchParams } from '../../services/nasa'
-import { Search, Image, Video, Calendar } from 'lucide-react'
+import { Search, Image, Video, Calendar, Volume2 } from 'lucide-react'
 import { format } from 'date-fns'
 
 export const Route = createFileRoute('/library/')({
@@ -160,16 +160,24 @@ function RouteComponent() {
                                     >
                                         <Card className="bg-card/50 backdrop-blur-sm border-white/5 overflow-hidden group hover:border-cyan/30 transition-all h-full">
                                             <div className="relative aspect-square overflow-hidden bg-surface">
-                                                <img
-                                                    src={imageUrl}
-                                                    alt={title}
-                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                                    loading="lazy"
-                                                />
+                                                {mediaType === 'audio' ? (
+                                                    <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-cyan/20 to-purple-500/20">
+                                                        <Volume2 className="h-16 w-16 text-cyan/50" />
+                                                    </div>
+                                                ) : (
+                                                    <img
+                                                        src={imageUrl}
+                                                        alt={title}
+                                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                        loading="lazy"
+                                                    />
+                                                )}
                                                 <div className="absolute top-2 right-2">
                                                     <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-background/80 backdrop-blur-sm border border-white/10">
                                                         {mediaType === 'video' ? (
                                                             <Video className="h-3 w-3 text-cyan" />
+                                                        ) : mediaType === 'audio' ? (
+                                                            <Volume2 className="h-3 w-3 text-cyan" />
                                                         ) : (
                                                             <Image className="h-3 w-3 text-cyan" />
                                                         )}
