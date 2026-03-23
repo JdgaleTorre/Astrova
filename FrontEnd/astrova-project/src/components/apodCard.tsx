@@ -9,7 +9,7 @@ import {
 import type { ApodResponse } from '../services/nasa';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { isSaved, saveItem } from '../services/storage';
+import { isSaved, toggleSaved } from '../services/storage';
 import { useState } from 'react';
 
 export default function ApodCard(data: ApodResponse) {
@@ -68,10 +68,12 @@ export default function ApodCard(data: ApodResponse) {
                 <Button
                   size="sm"
                   className="bg-cyan/90 hover:bg-cyan text-background group/btn gap-0 overflow-hidden shadow-lg backdrop-blur-sm"
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     const item = {
                       id: data.date,
                       type: 'apod' as const,
+                      media_type: data.media_type,
                       date: data.date,
                       title: data.title,
                       thumbnail: data.url,
@@ -80,8 +82,7 @@ export default function ApodCard(data: ApodResponse) {
                       description: data.explanation,
                       savedAt: new Date().toISOString(),
                     };
-                    saveItem(item);
-                    setSaved(true);
+                    setSaved(toggleSaved(item));
                   }}
                 >
                   {saved ? (
@@ -129,10 +130,12 @@ export default function ApodCard(data: ApodResponse) {
                 <Button
                   size="sm"
                   className="bg-cyan/90 hover:bg-cyan text-background group/btn gap-0 overflow-hidden shadow-lg backdrop-blur-sm"
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     const item = {
                       id: data.date,
                       type: 'apod' as const,
+                      media_type: data.media_type,
                       date: data.date,
                       title: data.title,
                       thumbnail: data.url,
@@ -141,8 +144,7 @@ export default function ApodCard(data: ApodResponse) {
                       description: data.explanation,
                       savedAt: new Date().toISOString(),
                     };
-                    saveItem(item);
-                    setSaved(true);
+                    setSaved(toggleSaved(item));
                   }}
                 >
                   {saved ? (

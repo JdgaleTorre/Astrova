@@ -9,13 +9,20 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './pages/__root'
+import { Route as SavedRouteImport } from './pages/saved'
 import { Route as NeoRouteImport } from './pages/neo'
 import { Route as EpicRouteImport } from './pages/epic'
 import { Route as ApodRouteImport } from './pages/apod'
 import { Route as IndexRouteImport } from './pages/index'
 import { Route as LibraryIndexRouteImport } from './pages/library/index'
 import { Route as LibraryIdRouteImport } from './pages/library/$id'
+import { Route as ApodDateRouteImport } from './pages/apod/$date'
 
+const SavedRoute = SavedRouteImport.update({
+  id: '/saved',
+  path: '/saved',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NeoRoute = NeoRouteImport.update({
   id: '/neo',
   path: '/neo',
@@ -46,58 +53,95 @@ const LibraryIdRoute = LibraryIdRouteImport.update({
   path: '/library/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApodDateRoute = ApodDateRouteImport.update({
+  id: '/$date',
+  path: '/$date',
+  getParentRoute: () => ApodRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/apod': typeof ApodRoute
+  '/apod': typeof ApodRouteWithChildren
   '/epic': typeof EpicRoute
   '/neo': typeof NeoRoute
+  '/saved': typeof SavedRoute
+  '/apod/$date': typeof ApodDateRoute
   '/library/$id': typeof LibraryIdRoute
   '/library/': typeof LibraryIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/apod': typeof ApodRoute
+  '/apod': typeof ApodRouteWithChildren
   '/epic': typeof EpicRoute
   '/neo': typeof NeoRoute
+  '/saved': typeof SavedRoute
+  '/apod/$date': typeof ApodDateRoute
   '/library/$id': typeof LibraryIdRoute
   '/library': typeof LibraryIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/apod': typeof ApodRoute
+  '/apod': typeof ApodRouteWithChildren
   '/epic': typeof EpicRoute
   '/neo': typeof NeoRoute
+  '/saved': typeof SavedRoute
+  '/apod/$date': typeof ApodDateRoute
   '/library/$id': typeof LibraryIdRoute
   '/library/': typeof LibraryIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/apod' | '/epic' | '/neo' | '/library/$id' | '/library/'
+  fullPaths:
+    | '/'
+    | '/apod'
+    | '/epic'
+    | '/neo'
+    | '/saved'
+    | '/apod/$date'
+    | '/library/$id'
+    | '/library/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/apod' | '/epic' | '/neo' | '/library/$id' | '/library'
+  to:
+    | '/'
+    | '/apod'
+    | '/epic'
+    | '/neo'
+    | '/saved'
+    | '/apod/$date'
+    | '/library/$id'
+    | '/library'
   id:
     | '__root__'
     | '/'
     | '/apod'
     | '/epic'
     | '/neo'
+    | '/saved'
+    | '/apod/$date'
     | '/library/$id'
     | '/library/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ApodRoute: typeof ApodRoute
+  ApodRoute: typeof ApodRouteWithChildren
   EpicRoute: typeof EpicRoute
   NeoRoute: typeof NeoRoute
+  SavedRoute: typeof SavedRoute
   LibraryIdRoute: typeof LibraryIdRoute
   LibraryIndexRoute: typeof LibraryIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/saved': {
+      id: '/saved'
+      path: '/saved'
+      fullPath: '/saved'
+      preLoaderRoute: typeof SavedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/neo': {
       id: '/neo'
       path: '/neo'
@@ -140,14 +184,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LibraryIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/apod/$date': {
+      id: '/apod/$date'
+      path: '/$date'
+      fullPath: '/apod/$date'
+      preLoaderRoute: typeof ApodDateRouteImport
+      parentRoute: typeof ApodRoute
+    }
   }
 }
 
+interface ApodRouteChildren {
+  ApodDateRoute: typeof ApodDateRoute
+}
+
+const ApodRouteChildren: ApodRouteChildren = {
+  ApodDateRoute: ApodDateRoute,
+}
+
+const ApodRouteWithChildren = ApodRoute._addFileChildren(ApodRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ApodRoute: ApodRoute,
+  ApodRoute: ApodRouteWithChildren,
   EpicRoute: EpicRoute,
   NeoRoute: NeoRoute,
+  SavedRoute: SavedRoute,
   LibraryIdRoute: LibraryIdRoute,
   LibraryIndexRoute: LibraryIndexRoute,
 }

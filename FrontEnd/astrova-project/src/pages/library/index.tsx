@@ -1,20 +1,14 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import HeaderComponent from '../../components/headerComponent';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '../../components/ui/card';
 import { Loading } from '../../components/ui/loading';
 import { ErrorDisplay } from '../../components/ui/error';
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { searchImages, type ImageSearchParams } from '../../services/nasa';
-import { Search, Image, Video, Calendar, Volume2 } from 'lucide-react';
-import { format } from 'date-fns';
+import { Search, Image, Video } from 'lucide-react';
+import LibraryCard from '../../components/libraryCard';
 
 export const Route = createFileRoute('/library/')({
   component: RouteComponent,
@@ -26,7 +20,6 @@ function RouteComponent() {
   const [selectedMediaType, setSelectedMediaType] = useState<
     'all' | 'image' | 'video' | 'audio'
   >('all');
-  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -149,73 +142,11 @@ function RouteComponent() {
 
           {!isLoading && !error && results.length > 0 && (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {results.map((item) => {
-                const nasaId = item.data[0]?.nasa_id;
-                const imageUrl =
-                  item.links?.find((link) => link.render === 'image')?.href ||
-                  item.href;
-                const title = item.data[0]?.title || 'Untitled';
-                const date = item.data[0]?.date_created
-                  ? format(new Date(item.data[0].date_created), 'MMM d, yyyy')
-                  : 'Unknown date';
-                const mediaType = item.data[0]?.media_type || 'image';
-
-                if (!nasaId) return null;
-
-                return (
-                  <div
-                    key={nasaId}
-                    onClick={() =>
-                      navigate({ to: '/library/$id', params: { id: nasaId } })
-                    }
-                    className="block cursor-pointer"
-                  >
-                    <Card className="bg-card/50 group hover:border-cyan/30 h-full overflow-hidden border-white/5 backdrop-blur-sm transition-all">
-                      <div className="bg-surface relative aspect-square overflow-hidden">
-                        {mediaType === 'audio' ? (
-                          <div className="from-cyan/20 flex h-full w-full items-center justify-center bg-linear-to-br to-purple-500/20">
-                            <Volume2 className="text-cyan/50 h-16 w-16" />
-                          </div>
-                        ) : (
-                          <img
-                            src={imageUrl}
-                            alt={title}
-                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                            loading="lazy"
-                          />
-                        )}
-                        <div className="absolute top-2 right-2">
-                          <span className="bg-background/80 inline-flex items-center gap-1 rounded-full border border-white/10 px-2 py-1 text-xs font-medium backdrop-blur-sm">
-                            {mediaType === 'video' ? (
-                              <Video className="text-cyan h-3 w-3" />
-                            ) : mediaType === 'audio' ? (
-                              <Volume2 className="text-cyan h-3 w-3" />
-                            ) : (
-                              <Image className="text-cyan h-3 w-3" />
-                            )}
-                            <span className="text-soft-white capitalize">
-                              {mediaType}
-                            </span>
-                          </span>
-                        </div>
-                      </div>
-                      <CardHeader className="p-4 pb-2">
-                        <CardTitle className="text-soft-white line-clamp-2 text-sm font-medium">
-                          {title}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="p-4 pt-2">
-                        <div className="flex items-center justify-between">
-                          <div className="text-muted-foreground flex items-center gap-1 text-xs">
-                            <Calendar className="h-3 w-3" />
-                            <span>{date}</span>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                );
-              })}
+              {results.map((item) => (
+                <div key={item.data[0]?.nasa_id}>
+                  <LibraryCard {...item} />
+                </div>
+              ))}
             </div>
           )}
         </div>
