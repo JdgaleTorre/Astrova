@@ -9,13 +9,20 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './pages/__root'
+import { Route as SavedRouteImport } from './pages/saved'
 import { Route as NeoRouteImport } from './pages/neo'
 import { Route as EpicRouteImport } from './pages/epic'
-import { Route as ApodRouteImport } from './pages/apod'
 import { Route as IndexRouteImport } from './pages/index'
 import { Route as LibraryIndexRouteImport } from './pages/library/index'
+import { Route as ApodIndexRouteImport } from './pages/apod/index'
 import { Route as LibraryIdRouteImport } from './pages/library/$id'
+import { Route as ApodDateRouteImport } from './pages/apod/$date'
 
+const SavedRoute = SavedRouteImport.update({
+  id: '/saved',
+  path: '/saved',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NeoRoute = NeoRouteImport.update({
   id: '/neo',
   path: '/neo',
@@ -24,11 +31,6 @@ const NeoRoute = NeoRouteImport.update({
 const EpicRoute = EpicRouteImport.update({
   id: '/epic',
   path: '/epic',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApodRoute = ApodRouteImport.update({
-  id: '/apod',
-  path: '/apod',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -41,63 +43,106 @@ const LibraryIndexRoute = LibraryIndexRouteImport.update({
   path: '/library/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApodIndexRoute = ApodIndexRouteImport.update({
+  id: '/apod/',
+  path: '/apod/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LibraryIdRoute = LibraryIdRouteImport.update({
   id: '/library/$id',
   path: '/library/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApodDateRoute = ApodDateRouteImport.update({
+  id: '/apod/$date',
+  path: '/apod/$date',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/apod': typeof ApodRoute
   '/epic': typeof EpicRoute
   '/neo': typeof NeoRoute
+  '/saved': typeof SavedRoute
+  '/apod/$date': typeof ApodDateRoute
   '/library/$id': typeof LibraryIdRoute
+  '/apod/': typeof ApodIndexRoute
   '/library/': typeof LibraryIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/apod': typeof ApodRoute
   '/epic': typeof EpicRoute
   '/neo': typeof NeoRoute
+  '/saved': typeof SavedRoute
+  '/apod/$date': typeof ApodDateRoute
   '/library/$id': typeof LibraryIdRoute
+  '/apod': typeof ApodIndexRoute
   '/library': typeof LibraryIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/apod': typeof ApodRoute
   '/epic': typeof EpicRoute
   '/neo': typeof NeoRoute
+  '/saved': typeof SavedRoute
+  '/apod/$date': typeof ApodDateRoute
   '/library/$id': typeof LibraryIdRoute
+  '/apod/': typeof ApodIndexRoute
   '/library/': typeof LibraryIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/apod' | '/epic' | '/neo' | '/library/$id' | '/library/'
+  fullPaths:
+    | '/'
+    | '/epic'
+    | '/neo'
+    | '/saved'
+    | '/apod/$date'
+    | '/library/$id'
+    | '/apod/'
+    | '/library/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/apod' | '/epic' | '/neo' | '/library/$id' | '/library'
+  to:
+    | '/'
+    | '/epic'
+    | '/neo'
+    | '/saved'
+    | '/apod/$date'
+    | '/library/$id'
+    | '/apod'
+    | '/library'
   id:
     | '__root__'
     | '/'
-    | '/apod'
     | '/epic'
     | '/neo'
+    | '/saved'
+    | '/apod/$date'
     | '/library/$id'
+    | '/apod/'
     | '/library/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ApodRoute: typeof ApodRoute
   EpicRoute: typeof EpicRoute
   NeoRoute: typeof NeoRoute
+  SavedRoute: typeof SavedRoute
+  ApodDateRoute: typeof ApodDateRoute
   LibraryIdRoute: typeof LibraryIdRoute
+  ApodIndexRoute: typeof ApodIndexRoute
   LibraryIndexRoute: typeof LibraryIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/saved': {
+      id: '/saved'
+      path: '/saved'
+      fullPath: '/saved'
+      preLoaderRoute: typeof SavedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/neo': {
       id: '/neo'
       path: '/neo'
@@ -110,13 +155,6 @@ declare module '@tanstack/react-router' {
       path: '/epic'
       fullPath: '/epic'
       preLoaderRoute: typeof EpicRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/apod': {
-      id: '/apod'
-      path: '/apod'
-      fullPath: '/apod'
-      preLoaderRoute: typeof ApodRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -133,6 +171,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LibraryIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/apod/': {
+      id: '/apod/'
+      path: '/apod'
+      fullPath: '/apod/'
+      preLoaderRoute: typeof ApodIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/library/$id': {
       id: '/library/$id'
       path: '/library/$id'
@@ -140,15 +185,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LibraryIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/apod/$date': {
+      id: '/apod/$date'
+      path: '/apod/$date'
+      fullPath: '/apod/$date'
+      preLoaderRoute: typeof ApodDateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ApodRoute: ApodRoute,
   EpicRoute: EpicRoute,
   NeoRoute: NeoRoute,
+  SavedRoute: SavedRoute,
+  ApodDateRoute: ApodDateRoute,
   LibraryIdRoute: LibraryIdRoute,
+  ApodIndexRoute: ApodIndexRoute,
   LibraryIndexRoute: LibraryIndexRoute,
 }
 export const routeTree = rootRouteImport
