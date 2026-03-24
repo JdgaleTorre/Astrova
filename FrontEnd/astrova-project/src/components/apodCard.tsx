@@ -17,7 +17,7 @@ export default function ApodCard(data: ApodResponse) {
   return (
     <div key={data.date}>
       {/* Hero Image */}
-      <div className="group relative mb-6 overflow-hidden rounded-2xl">
+      <div className="group relative mb-6 rounded-2xl md:overflow-hidden">
         {data?.media_type === 'image' ? (
           <div className="relative">
             <img
@@ -46,7 +46,7 @@ export default function ApodCard(data: ApodResponse) {
 
             {/* Download button on hover */}
 
-            <div className="absolute top-6 right-6 opacity-0 transition-opacity group-hover:opacity-100">
+            <div className="absolute -top-9 right-6 opacity-100 transition-opacity group-hover:opacity-100 md:top-6 md:opacity-0">
               <div className="flex gap-2">
                 <Button
                   size="sm"
@@ -98,7 +98,7 @@ export default function ApodCard(data: ApodResponse) {
             </div>
           </div>
         ) : (
-          <div className="bg-background relative aspect-video overflow-hidden rounded-2xl">
+          <div className="bg-background relative aspect-video rounded-2xl md:overflow-hidden">
             <video
               src={data?.url}
               title={data?.title}
@@ -108,7 +108,7 @@ export default function ApodCard(data: ApodResponse) {
               loop
               muted
             />
-            <div className="absolute top-6 right-6 opacity-0 transition-opacity group-hover:opacity-100">
+            <div className="absolute -top-9 right-6 opacity-100 transition-opacity group-hover:opacity-100 md:top-6 md:opacity-0">
               <div className="flex gap-2">
                 <Button
                   size="sm"
