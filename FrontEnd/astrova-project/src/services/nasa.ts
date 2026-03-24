@@ -100,6 +100,10 @@ export interface NeoAsteroid {
   }>;
 }
 
+export interface NeoAsteroidChart extends NeoAsteroid {
+  date: Date;
+}
+
 export interface NeoFeedResponse {
   element_count: number;
   near_earth_objects: Record<string, NeoAsteroid[]>;
